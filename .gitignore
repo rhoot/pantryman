@@ -1,0 +1,7 @@
+#
+# Copyright (c) 2018 Johan Sköld
+# License: https://opensource.org/licenses/ISC
+#
+
+/.build/
+.DS_Store

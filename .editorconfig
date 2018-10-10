@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2018 Johan Sköld
+# License: https://opensource.org/licenses/ISC
+#
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = space
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
+
+[README.md]
+trim_trailing_whitespace = false
