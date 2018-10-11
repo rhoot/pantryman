@@ -5,7 +5,7 @@
 
 #include <pantryman/main.hpp>
 
-int PM_CALL pmMain(int, char**)
+int32_t PM_CALL pmMain(int32_t, char**)
 {
 	return 0;
 }

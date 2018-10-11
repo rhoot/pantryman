@@ -5,8 +5,10 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include <pantryman/config.hpp>
 
 /// Application entry point. Define this in your program to serve as your main
 /// function.
-extern int PM_CALL pmMain(int argc, char** argv);
+extern int32_t PM_CALL pmMain(int32_t argc, char** argv);
