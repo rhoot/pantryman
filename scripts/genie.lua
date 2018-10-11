@@ -3,7 +3,7 @@
 -- License: https://opensource.org/licenses/ISC
 --
 
-solution "pantry"
+solution "pantryman"
     location  "../.build/prj"
     objdir    "../.build/obj"
     targetdir "../.build/out"
@@ -47,7 +47,7 @@ solution "pantry"
             "_CRT_SECURE_NO_WARNINGS",
         }
 
-    project "pantry"
+    project "pantryman"
         kind "StaticLib"
 
         files {
@@ -56,7 +56,7 @@ solution "pantry"
             "../src/**.cpp",
         }
 
-    project "pantry_test"
+    project "pantryman_test"
         kind "ConsoleApp"
 
         files {
@@ -64,5 +64,5 @@ solution "pantry"
         }
 
         links {
-            "pantry",
+            "pantryman",
         }

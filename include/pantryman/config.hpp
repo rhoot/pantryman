@@ -7,17 +7,17 @@
 
 // OS
 
-#define PANTRY_OS_WINDOWS 0
+#define PM_OS_WINDOWS 0
 
 #if defined(_WIN32)
-#	undef  PANTRY_OS_WINDOWS
-#	define PANTRY_OS_WINDOWS 1
+#	undef  PM_OS_WINDOWS
+#	define PM_OS_WINDOWS 1
 #endif
 
 // Calling convention
 
-#if PANTRY_OS_WINDOWS
-#	define PANTRY_CALL __stdcall
+#if PM_OS_WINDOWS
+#	define PM_CALL __stdcall
 #else
-#	define PANTRY_CALL
+#	define PM_CALL
 #endif

@@ -3,9 +3,9 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#include <pantry/main.hpp>
+#include <pantryman/main.hpp>
 
-int PANTRY_CALL pantryMain(int, char**)
+int PM_CALL pmMain(int, char**)
 {
 	return 0;
 }

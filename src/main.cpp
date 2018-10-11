@@ -3,10 +3,10 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#include <pantry/config.hpp>
-#include <pantry/main.hpp>
+#include <pantryman/config.hpp>
+#include <pantryman/main.hpp>
 
 int main(int argc, char** argv)
 {
-	return pantryMain(argc, argv);
+	return pmMain(argc, argv);
 }
