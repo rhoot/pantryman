@@ -10,7 +10,7 @@
 namespace pm
 {
 
-    class AppBase abstract
+    class HostBase abstract
     {
     public:
 
@@ -40,4 +40,4 @@ namespace pm
 
 } // namespace pm
 
-#include "windows/app_win.hpp"
+#include "windows/host_win.hpp"

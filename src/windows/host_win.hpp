@@ -9,19 +9,19 @@
 
 #if PM_OS_WINDOWS
 
-#include "../app.hpp"
+#include "../host.hpp"
 
 namespace pm
 {
 
-    class WinApp : public AppBase
+    class WinHost : public HostBase
     {
 
         void pumpEvents() override;
 
     };
 
-    using App = WinApp;
+    using Host = WinHost;
 
 } // namespace pm
 

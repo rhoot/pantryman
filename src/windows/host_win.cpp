@@ -13,12 +13,12 @@
 
 #include <Windows.h>
 
-#include "app_win.hpp"
+#include "host_win.hpp"
 
 namespace pm
 {
 
-    void WinApp::pumpEvents()
+    void WinHost::pumpEvents()
     {
         MSG msg;
 

@@ -3,12 +3,12 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#include "app.hpp"
+#include "host.hpp"
 
 namespace pm
 {
 
-    void AppBase::run()
+    void HostBase::run()
     {
         for (;;)
         {
@@ -21,14 +21,14 @@ namespace pm
         }
     }
 
-    void AppBase::stop()
+    void HostBase::stop()
     {
         Msg msg;
         msg.type = Msg::STOP;
         m_msgQueue.push(msg);
     }
 
-    bool AppBase::process(const Msg& msg)
+    bool HostBase::process(const Msg& msg)
     {
         switch (msg.type)
         {
@@ -42,7 +42,7 @@ namespace pm
         return true;
     }
 
-    bool AppBase::processQueue()
+    bool HostBase::processQueue()
     {
         Msg msg;
 

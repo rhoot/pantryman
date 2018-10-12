@@ -8,21 +8,21 @@
 
 #include <thread>
 
-#include "app.hpp"
+#include "host.hpp"
 
 int main(int argc, char** argv)
 {
     int32_t exitCode = 0;
-    pm::App app;
+    pm::Host host;
 
-    const auto appProc = [&exitCode, &app, argc, argv] ()
+    const auto appProc = [&exitCode, &host, argc, argv] ()
     {
         exitCode = pmMain(argc, argv);
-        app.stop();
+        host.stop();
     };
 
     std::thread appThread{std::move(appProc)};
-    app.run();
+    host.run();
     appThread.join();
     return exitCode;
 }
