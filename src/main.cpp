@@ -13,16 +13,15 @@
 int main(int argc, char** argv)
 {
     int32_t exitCode = 0;
-    pm::Host host;
 
-    const auto appProc = [&exitCode, &host, argc, argv] ()
+    const auto appProc = [&exitCode, argc, argv] ()
     {
         exitCode = pmMain(argc, argv);
-        host.stop();
+        pm::getHost().stop();
     };
 
     std::thread appThread{std::move(appProc)};
-    host.run();
+    pm::getHost().run();
     appThread.join();
     return exitCode;
 }

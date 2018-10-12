@@ -5,39 +5,11 @@
 
 #pragma once
 
-#include "queue.hpp"
+#include "windows/win_host.hpp"
 
 namespace pm
 {
 
-    class HostBase abstract
-    {
-    public:
+    Host& getHost();
 
-        void run();
-        void stop();
-
-    protected:
-
-        virtual void pumpEvents() = 0;
-
-    private:
-
-        struct Msg
-        {
-            enum Type
-            {
-                STOP,
-            } type;
-        };
-
-        bool process(const Msg& msg);
-        bool processQueue();
-
-        Queue<Msg> m_msgQueue;
-
-    };
-
-} // namespace pm
-
-#include "windows/host_win.hpp"
+}

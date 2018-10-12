@@ -9,12 +9,12 @@
 
 #if PM_OS_WINDOWS
 
-#include "../host.hpp"
+#include "../base/base_host.hpp"
 
 namespace pm
 {
 
-    class WinHost : public HostBase
+    class WinHost : public BaseHost
     {
 
         void pumpEvents() override;
