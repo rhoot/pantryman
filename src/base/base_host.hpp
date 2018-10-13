@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include "../queue.hpp"
+#include <cstdint>
+
+#include "../cmdbuffer.hpp"
 
 namespace pm
 {
@@ -13,6 +15,8 @@ namespace pm
     class BaseHost abstract
     {
     public:
+
+        BaseHost();
 
         void run();
         void stop();
@@ -23,18 +27,13 @@ namespace pm
 
     private:
 
-        struct Msg
-        {
-            enum Type
-            {
-                STOP,
-            } type;
-        };
+        enum class Cmd : uint16_t;
 
-        bool process(const Msg& msg);
-        bool processQueue();
+        void processCmds();
+        void processStop();
 
-        Queue<Msg> m_msgQueue;
+        CmdBufferSpSc m_commands;
+        bool          m_stop;
 
     };
 

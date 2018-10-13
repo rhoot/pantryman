@@ -8,53 +8,63 @@
 namespace pm
 {
 
+    enum class BaseHost::Cmd : uint16_t
+    {
+        STOP,
+    };
+
+    BaseHost::BaseHost()
+        : m_commands{1024}
+        , m_stop{false}
+    {
+    }
+
     void BaseHost::run()
     {
+        m_stop = false;
+
         for (;;)
         {
-            if (!processQueue())
+            processCmds();
+            pumpEvents();
+
+            if (m_stop)
             {
                 break;
             }
-
-            pumpEvents();
         }
     }
 
     void BaseHost::stop()
     {
-        Msg msg;
-        msg.type = Msg::STOP;
-        m_msgQueue.push(msg);
+        m_commands.beginWrite();
+        m_commands.write(Cmd::STOP);
+        m_commands.endWrite();
     }
 
-    bool BaseHost::process(const Msg& msg)
+    void BaseHost::processCmds()
     {
-        switch (msg.type)
+        while (m_commands.beginRead())
         {
-        case Msg::STOP:
-            return false;
+            Cmd cmd = m_commands.read<Cmd>();
 
-        default:
-            break;
-        }
-
-        return true;
-    }
-
-    bool BaseHost::processQueue()
-    {
-        Msg msg;
-
-        while (m_msgQueue.pop(&msg))
-        {
-            if (!process(msg))
+            switch (cmd)
             {
-                return false;
-            }
-        }
+                case Cmd::STOP:
+                    processStop();
+                    break;
 
-        return true;
+                default:
+                    break;
+            }
+
+            m_commands.endRead();
+        }
+    }
+
+    void BaseHost::processStop()
+    {
+        m_stop = true;
     }
 
 }
