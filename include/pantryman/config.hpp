@@ -38,3 +38,7 @@
 #   define PM_DIAG_IGNORE_MSVC(x)   __pragma(warning(disable: x))
 #   define PM_DIAG_POP()            __pragma(warning(pop))
 #endif
+
+// CPU
+
+#define PM_CACHE_LINE_SIZE 64

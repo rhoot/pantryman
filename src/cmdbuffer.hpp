@@ -8,6 +8,11 @@
 #include <cstdint>
 #include <atomic>
 
+#include <pantryman/config.hpp>
+
+PM_DIAG_PUSH()
+PM_DIAG_IGNORE_MSVC(4324) // structure was padded due to alignment specifier
+
 namespace pm
 {
 
@@ -44,22 +49,30 @@ namespace pm
 
     private:
 
-        alignas(64)
+        // Constant shared data.
+        alignas(PM_CACHE_LINE_SIZE)
         uintptr_t m_buffer;
         uint32_t  m_size;
 
-        alignas(64)
+        // Private producer data.
+        alignas(PM_CACHE_LINE_SIZE)
         uint32_t  m_writePos;
         uint32_t  m_writeEnd;
 
-        alignas(64)
+        // Private consumer data.
+        alignas(PM_CACHE_LINE_SIZE)
         uint32_t  m_readPos;
 
-        alignas(64)
+        // Shared producer data.
+        alignas(PM_CACHE_LINE_SIZE)
         std::atomic<uint32_t> m_commit;
 
-        alignas(64)
+        // Shared consumer data.
+        alignas(PM_CACHE_LINE_SIZE)
         std::atomic<uint32_t> m_consume;
+
     };
 
 } // namespace pm
+
+PM_DIAG_POP()
