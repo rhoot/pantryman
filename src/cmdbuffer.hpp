@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <atomic>
 
-#include <pantryman/config.hpp>
+#include <pantryman/platform.hpp>
 
 PM_DIAG_PUSH()
 PM_DIAG_IGNORE_MSVC(4324) // structure was padded due to alignment specifier

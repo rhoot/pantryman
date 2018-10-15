@@ -3,7 +3,7 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#include <pantryman/config.hpp>
+#include <pantryman/platform.hpp>
 #include <pantryman/main.hpp>
 
 #include <thread>

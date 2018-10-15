@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-#include <pantryman/config.hpp>
+#include <pantryman/platform.hpp>
 
 /// Application entry point. Define this in your program to serve as your main
 /// function.

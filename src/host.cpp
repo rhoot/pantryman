@@ -17,4 +17,9 @@ namespace pm
         return s_host;
     }
 
+    bool nextEvent(HostEvent* event)
+    {
+        return s_host.processEvent(event);
+    }
+
 }
