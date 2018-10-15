@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <cstdint>
-
 #include <pantryman/platform.hpp>
+
+#include <cstdint>
 
 /// Application entry point. Define this in your program to serve as your main
 /// function.

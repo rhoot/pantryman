@@ -20,7 +20,7 @@ namespace pm
     {
         Error err;
         ~ErrorAssert();
-        operator Error* ();
+        operator Error*();
     };
 
     extern Error ERR_OK;

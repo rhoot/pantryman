@@ -12,6 +12,7 @@
 #include "../base/base_host.hpp"
 #include "../compat/windows.hpp"
 #include "../config.hpp"
+#include "win_window.hpp"
 
 namespace pm
 {
@@ -26,13 +27,10 @@ namespace pm
     private:
 
         void createWindowImpl(const CreateWindowArgs& args) override;
-        void destroyWindowImpl(uint8_t index) override;
+        void destroyWindowImpl(WindowHandle handle) override;
         void pumpEventsImpl() override;
 
-        static LRESULT windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
-
-        HINSTANCE m_module;
-        HWND      m_windows[PM_CONFIG_MAX_WINDOWS];
+        WinWindow m_windows[PM_CONFIG_MAX_WINDOWS];
 
     };
 

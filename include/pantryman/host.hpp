@@ -5,7 +5,10 @@
 
 #pragma once
 
-#include "window.hpp"
+#include <pantryman/error.hpp>
+#include <pantryman/window.hpp>
+
+#include <cstdint>
 
 namespace pm
 {
@@ -13,6 +16,7 @@ namespace pm
     struct WindowEvent
     {
         WindowHandle handle;
+        Error        error;
     };
 
     struct HostEvent
@@ -31,8 +35,11 @@ namespace pm
         {
             WindowEvent window;
         };
+
+        HostEvent();
     };
 
     bool nextEvent(HostEvent* event);
+    void stop();
 
 } // namespace pm

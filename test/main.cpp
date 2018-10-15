@@ -9,7 +9,10 @@
 
 int32_t PM_CALL pmMain(int32_t, char**)
 {
-    pm::WindowHandle window = pm::createWindow(pm::WindowParams{}, pm::ErrorAssert{});
+    pm::WindowParams params;
+    params.title = "foo";
+
+    pm::WindowHandle window = pm::createWindow(params, pm::ErrorAssert{});
 
     bool running = true;
 
@@ -19,10 +22,19 @@ int32_t PM_CALL pmMain(int32_t, char**)
 
         while (pm::nextEvent(&event))
         {
+            switch (event.type)
+            {
+                case pm::HostEvent::WINDOW_CLOSED:
+                    pm::destroy(window, pm::ErrorAssert{});
+                    pm::stop();
+                    break;
+
+                case pm::HostEvent::STOPPED:
+                    running = false;
+                    break;
+            }
         }
     }
 
-    pm::destroy(window, pm::ErrorAssert{});
-    
 	return 0;
 }

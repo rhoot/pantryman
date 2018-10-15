@@ -14,7 +14,7 @@ namespace pm
 
     struct WindowHandle
     {
-        uint8_t value;
+        uint8_t value{UINT8_MAX};
     };
 
     struct WindowParams

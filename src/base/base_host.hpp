@@ -8,10 +8,10 @@
 #include <pantryman/host.hpp>
 #include <pantryman/window.hpp>
 
-#include "../cmdbuffer.hpp"
+#include "../commands.hpp"
 #include "../config.hpp"
+#include "../events.hpp"
 #include "../handles.hpp"
-#include "base_window.hpp"
 
 #include <cstdint>
 
@@ -34,24 +34,21 @@ namespace pm
     protected:
 
         virtual void createWindowImpl(const CreateWindowArgs& args) = 0;
-        virtual void destroyWindowImpl(uint8_t index) = 0;
+        virtual void destroyWindowImpl(WindowHandle handle) = 0;
         virtual void pumpEventsImpl() = 0;
 
-        void sendWindowClosedEvent(uint8_t index);
-        void sendWindowCreatedEvent(uint8_t index);
-        void sendWindowDestroyedEvent(uint8_t index);
+        HostEventSink m_events;
 
     private:
 
         enum class Cmd : uint16_t;
 
         void processCmds();
-        void processCreateWindow();
-        void processDestroyWindow();
+        void processCreateWindow(const CreateWindowArgs& args);
+        void processDestroyWindow(WindowHandle handle);
         void processStop();
 
-        CmdBufferSpSc m_commands;
-        CmdBufferSpSc m_events;
+        HostCommands  m_commands;
         bool          m_stop;
 
         HandlePool<WindowHandle, PM_CONFIG_MAX_WINDOWS> m_windowHandles;

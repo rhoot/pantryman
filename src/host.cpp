@@ -17,9 +17,17 @@ namespace pm
         return s_host;
     }
 
+    HostEvent::HostEvent()
+    { }
+
     bool nextEvent(HostEvent* event)
     {
         return s_host.processEvent(event);
+    }
+
+    void stop()
+    {
+        s_host.stop();
     }
 
 }
