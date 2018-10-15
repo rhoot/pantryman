@@ -8,9 +8,7 @@
 #include <pantryman/error.hpp>
 #include <pantryman/platform.hpp>
 
-#if PM_COMPILER_MSVC
-#   include <intrin.h>
-#endif
+#include "compat/intrin.hpp"
 
 namespace pm
 {
