@@ -32,13 +32,15 @@ namespace pm
 
         void registerClass(Error* o_err);
         void unregisterClass();
+        void updateMetaKeys(Key key, bool isDown);
 
         static LRESULT windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
         static uint32_t s_classRefs;
 
-        HostEventSink* m_events;
-        HWND           m_hwnd;
-        WindowHandle   m_handle;
+        HostEventSink*  m_events;
+        HWND            m_hwnd;
+        WindowHandle    m_handle;
+        uint16_t        m_metaKeys;
     };
 
     using Window = WinWindow;

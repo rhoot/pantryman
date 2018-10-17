@@ -26,6 +26,19 @@ namespace pm
 
         switch (event->type)
         {
+            case HostEvent::KEY_DOWN:
+            case HostEvent::KEY_UP:
+            {
+                const Key key                 = m_buffer.read<Key>();
+                const MetaKeyFlags::Type meta = m_buffer.read<MetaKeyFlags::Type>();
+                event->keyboard.key           = key;
+                event->keyboard.isAltDown     = !!(meta & MetaKeyFlags::ALT);
+                event->keyboard.isCtrlDown    = !!(meta & MetaKeyFlags::CTRL);
+                event->keyboard.isShiftDown   = !!(meta & MetaKeyFlags::SHIFT);
+                event->keyboard.isOsLogoDown  = !!(meta & MetaKeyFlags::OS_LOGO);
+                break;
+            }
+
             case HostEvent::STOPPED:
                 break;
 
@@ -53,6 +66,24 @@ namespace pm
 
         m_buffer.endRead();
         return true;
+    }
+
+    void HostEventSink::sendKeyDownEvent(Key key, MetaKeyFlags::Type meta)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostEvent::KEY_DOWN);
+        m_buffer.write(key);
+        m_buffer.write(meta);
+        m_buffer.endWrite();
+    }
+
+    void HostEventSink::sendKeyUpEvent(Key key, MetaKeyFlags::Type meta)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostEvent::KEY_UP);
+        m_buffer.write(key);
+        m_buffer.write(meta);
+        m_buffer.endWrite();
     }
 
     void HostEventSink::sendStoppedEvent()

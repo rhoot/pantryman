@@ -15,4 +15,7 @@
 
 #   include <Windows.h>
 
+// wtf windows?
+#   undef DELETE
+
 #endif

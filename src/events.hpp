@@ -15,6 +15,18 @@
 namespace pm
 {
 
+    struct MetaKeyFlags
+    {
+        enum Type : uint16_t
+        {
+            NONE    = 0,
+            ALT     = (1 << 0),
+            CTRL    = (1 << 1),
+            SHIFT   = (1 << 2),
+            OS_LOGO = (1 << 3),
+        };
+    };
+
     class HostEventSink
     {
     public:
@@ -27,6 +39,8 @@ namespace pm
 
         // Producer
 
+        void sendKeyDownEvent(Key key, MetaKeyFlags::Type meta);
+        void sendKeyUpEvent(Key key, MetaKeyFlags::Type meta);
         void sendStoppedEvent();
         void sendWindowClosedEvent(WindowHandle handle);
         void sendWindowCreatedEvent(WindowHandle handle, const Error& err);

@@ -6,12 +6,32 @@
 #pragma once
 
 #include <pantryman/error.hpp>
+#include <pantryman/keyboard.hpp>
 #include <pantryman/window.hpp>
 
 #include <cstdint>
 
 namespace pm
 {
+
+    /// Keyboard input event.
+    struct KeyboardEvent
+    {
+        /// Key that was part of the event.
+        Key key;
+
+        /// Whether the ALT key was held down at the time of the event.
+        bool isAltDown;
+
+        /// Whether the CTRL key was held down at the time of the event.
+        bool isCtrlDown;
+
+        /// Whether the SHIFT key was held down at the time of the event.
+        bool isShiftDown;
+
+        /// Whether an OS logo key was held down at the time of the event.
+        bool isOsLogoDown;
+    };
 
     /// Window event.
     struct WindowEvent
@@ -65,9 +85,17 @@ namespace pm
             /// a different window.
             WINDOW_DESTROYED,
 
-            /// A window was resize. The `resize` field contains details about
+            /// A window was resized. The `resize` field contains details about
             /// the event.
             WINDOW_RESIZED,
+
+            /// A key was pressed. Does not repeat. The `keyboard` field
+            /// contains details about the key.
+            KEY_DOWN,
+
+            /// A key was released. The `keyboard` field contains details about
+            /// the key.
+            KEY_UP,
         };
 
         /// Type of event that was triggered.
@@ -84,6 +112,11 @@ namespace pm
             /// Window resize details. Provided for events of type
             /// `WINDOW_RESIZED`.
             WindowResizeEvent resize;
+
+            /// Keyboard input detauls. Provided for events of type:
+            /// - KEY_DOWN
+            /// - KEY_UP
+            KeyboardEvent keyboard;
         };
 
         HostEvent();

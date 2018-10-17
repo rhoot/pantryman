@@ -3,7 +3,9 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#include "../host.hpp"
+#include <pantryman/keyboard.hpp>
+#include "../commands.hpp"
+#include "win_keyboard.hpp"
 #include "win_window.hpp"
 
 #include <cstring>
@@ -28,6 +30,7 @@ namespace pm
         : m_events{nullptr}
         , m_hwnd{nullptr}
         , m_handle{UINT8_MAX}
+        , m_metaKeys{MetaKeyFlags::NONE}
     { }
 
     void WinWindow::create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err)
@@ -120,6 +123,36 @@ namespace pm
         }
     }
 
+    void WinWindow::updateMetaKeys(Key key, bool isDown)
+    {
+        uint16_t bit = 0;
+
+        switch (key)
+        {
+            case Key::LEFT_ALT:
+            case Key::RIGHT_ALT:
+                bit = MetaKeyFlags::ALT;
+                break;
+
+            case Key::LEFT_CONTROL:
+            case Key::RIGHT_CONTROL:
+                bit = MetaKeyFlags::CTRL;
+                break;
+
+            case Key::LEFT_SHIFT:
+            case Key::RIGHT_SHIFT:
+                bit = MetaKeyFlags::SHIFT;
+                break;
+
+            case Key::LEFT_OS_LOGO:
+            case Key::RIGHT_OS_LOGO:
+                bit = MetaKeyFlags::OS_LOGO;
+                break;
+        }
+
+        m_metaKeys = isDown ? (m_metaKeys | bit) : (m_metaKeys & ~bit);
+    }
+
     /*static*/ LRESULT WinWindow::windowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     {
         WinWindow* window = (WinWindow*)GetWindowLongPtrW(hwnd, GWLP_USERDATA);
@@ -136,7 +169,7 @@ namespace pm
                 {
                     const uint16_t width  = LOWORD(lparam);
                     const uint16_t height = HIWORD(lparam);
-                    WindowState state = WindowState::NORMAL;
+                    WindowState    state  = WindowState::NORMAL;
 
                     if (wparam == SIZE_MINIMIZED)
                     {
@@ -148,6 +181,37 @@ namespace pm
                     }
 
                     window->m_events->sendWindowResizedEvent(window->m_handle, width, height, state);
+                    break;
+                }
+
+                case WM_KEYDOWN:
+                {
+                    const bool previous = !!(lparam & (1 << 30));
+
+                    if (!previous)
+                    {
+                        const bool extended = !!(lparam & (1 << 24));
+                        const Key  key      = translateKey(uint32_t(wparam), extended);
+                        window->updateMetaKeys(key, true);
+                        window->m_events->sendKeyDownEvent(key, MetaKeyFlags::Type(window->m_metaKeys));
+                    }
+
+                    break;
+                }
+
+                case WM_KEYUP:
+                {
+                    // Microsoft says this is always true for WM_KEYUP. That's a lie.
+                    const bool previous = !!(lparam & (1 << 30));
+
+                    if (previous)
+                    {
+                        const bool extended = !!(lparam & (1 << 24));
+                        const Key  key      = translateKey(uint32_t(wparam), extended);
+                        window->updateMetaKeys(key, false);
+                        window->m_events->sendKeyUpEvent(key, MetaKeyFlags::Type(window->m_metaKeys));
+                    }
+
                     break;
                 }
             }

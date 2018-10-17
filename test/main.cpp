@@ -26,6 +26,28 @@ int32_t PM_CALL pmMain(int32_t, char**)
         {
             switch (event.type)
             {
+                case pm::HostEvent::KEY_DOWN:
+                    std::printf(
+                        "KEY_DOWN { key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        uint16_t(event.keyboard.key),
+                        event.keyboard.isAltDown ? "t" : "f",
+                        event.keyboard.isCtrlDown ? "t" : "f",
+                        event.keyboard.isShiftDown ? "t" : "f",
+                        event.keyboard.isOsLogoDown ? "t" : "f"
+                    );
+                    break;
+
+                case pm::HostEvent::KEY_UP:
+                    std::printf(
+                        "KEY_UP { key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        uint16_t(event.keyboard.key),
+                        event.keyboard.isAltDown ? "t" : "f",
+                        event.keyboard.isCtrlDown ? "t" : "f",
+                        event.keyboard.isShiftDown ? "t" : "f",
+                        event.keyboard.isOsLogoDown ? "t" : "f"
+                    );
+                    break;
+
                 case pm::HostEvent::STOPPED:
                     std::printf("STOPPED\n");
                     running = false;
