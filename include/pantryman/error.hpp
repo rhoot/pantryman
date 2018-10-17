@@ -10,12 +10,15 @@
 namespace pm
 {
 
+    /// Error object.
     struct Error
     {
         int32_t     code{0};
         const char* description{"OK"};
     };
 
+    /// Assertion error. Use in place of an `Error` pointer to trigger an
+    /// assertion failure on errors.
     struct ErrorAssert
     {
         Error err;
@@ -23,10 +26,13 @@ namespace pm
         operator Error*();
     };
 
+    /// Success error value.
     extern Error ERR_OK;
 
+    /// Return whether the given error is OK.
     bool isOk(Error* err);
 
+    /// Set `err` to `value` if `err` is still OK.
 #define PM_ERROR_UPDATE(err, value)     \
     do                                  \
     {                                   \
@@ -36,6 +42,7 @@ namespace pm
         }                               \
     } while(false)
 
+    /// Return `...` if `err` is not OK.
 #define PM_ERROR_RETURN(err, ...)       \
     do                                  \
     {                                   \

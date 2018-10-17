@@ -42,8 +42,8 @@ namespace pm
 
         for (;;)
         {
-            processCmds();
             pumpEventsImpl();
+            processCmds();
 
             if (m_stop)
             {
@@ -67,7 +67,10 @@ namespace pm
             {
                 case HostCommand::CREATE_WINDOW:  processCreateWindow(cmd.createWindow);  break;
                 case HostCommand::DESTROY_WINDOW: processDestroyWindow(cmd.windowHandle); break;
-                case HostCommand::STOP:           processStop();                          break;
+
+                case HostCommand::STOP:
+                    processStop();
+                    return;
 
                 default:
                     assert(!"Invalid command type.");
