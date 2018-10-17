@@ -22,7 +22,7 @@ namespace pm
 
     bool nextEvent(HostEvent* event)
     {
-        return s_host.processEvent(event);
+        return s_host.nextEvent(event);
     }
 
     void stop()

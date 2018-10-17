@@ -39,6 +39,13 @@ namespace pm
                 event->window.error  = m_buffer.read<Error>();
                 break;
 
+            case HostEvent::WINDOW_RESIZED:
+                event->resize.handle = m_buffer.read<WindowHandle>();
+                event->resize.width  = m_buffer.read<uint16_t>();
+                event->resize.height = m_buffer.read<uint16_t>();
+                event->resize.state  = m_buffer.read<WindowState>();
+                break;
+
             default:
                 assert(!"invalid event type");
                 break;
@@ -79,5 +86,16 @@ namespace pm
         m_buffer.write(handle);
         m_buffer.endWrite();
     }
+
+	void HostEventSink::sendWindowResizedEvent(WindowHandle handle, uint16_t w, uint16_t h, WindowState state)
+	{
+        m_buffer.beginWrite();
+        m_buffer.write(HostEvent::WINDOW_RESIZED);
+        m_buffer.write(handle);
+        m_buffer.write(w);
+        m_buffer.write(h);
+        m_buffer.write(state);
+        m_buffer.endWrite();
+	}
 
 } // namespace pm

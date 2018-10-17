@@ -31,7 +31,7 @@ namespace pm
         m_commands.sendDestroyWindowCmd(handle);
     }
 
-    bool BaseHost::processEvent(HostEvent* event)
+    bool BaseHost::nextEvent(HostEvent* event)
     {
         return m_events.nextEvent(event);
     }

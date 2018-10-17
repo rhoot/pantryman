@@ -16,8 +16,6 @@
 namespace pm
 {
 
-    constexpr wchar_t WINDOW_CLASS_NAME[] = L"pm::Window";
-
     WinHost::WinHost()
     { }
 

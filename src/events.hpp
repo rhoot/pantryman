@@ -7,7 +7,10 @@
 
 #include <pantryman/error.hpp>
 #include <pantryman/host.hpp>
+#include <pantryman/window.hpp>
 #include "cmdbuffer.hpp"
+
+#include <cstdint>
 
 namespace pm
 {
@@ -28,6 +31,7 @@ namespace pm
         void sendWindowClosedEvent(WindowHandle handle);
         void sendWindowCreatedEvent(WindowHandle handle, const Error& err);
         void sendWindowDestroyedEvent(WindowHandle handle);
+        void sendWindowResizedEvent(WindowHandle handle, uint16_t w, uint16_t h, WindowState state);
 
     private:
 

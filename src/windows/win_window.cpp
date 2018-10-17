@@ -128,9 +128,28 @@ namespace pm
         {
             switch (msg)
             {
-            case WM_CLOSE:
-                window->m_events->sendWindowClosedEvent(window->m_handle);
-                break;
+                case WM_CLOSE:
+                    window->m_events->sendWindowClosedEvent(window->m_handle);
+                    break;
+
+                case WM_SIZE:
+                {
+                    const uint16_t width  = LOWORD(lparam);
+                    const uint16_t height = HIWORD(lparam);
+                    WindowState state = WindowState::NORMAL;
+
+                    if (wparam == SIZE_MINIMIZED)
+                    {
+                        state = WindowState::MINIMIZED;
+                    }
+                    else if (wparam == SIZE_MAXIMIZED)
+                    {
+                        state = WindowState::MAXIMIZED;
+                    }
+
+                    window->m_events->sendWindowResizedEvent(window->m_handle, width, height, state);
+                    break;
+                }
             }
         }
 

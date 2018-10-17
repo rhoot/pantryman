@@ -27,7 +27,7 @@ namespace pm
         WindowHandle createWindow(const WindowParams& params, Error* o_err);
         void destroyWindow(WindowHandle handle, Error* o_err);
 
-        bool processEvent(HostEvent* event);
+        bool nextEvent(HostEvent* event);
         void run();
         void stop();
 

@@ -23,6 +23,22 @@ namespace pm
         Error error;
     };
 
+    /// Window resize event.
+    struct WindowResizeEvent
+    {
+        /// Handle of the window that triggered the event.
+        WindowHandle handle;
+
+        /// New width of the client area, in device pixels.
+        uint16_t width;
+
+        /// New height of the client area, in device pixels.
+        uint16_t height;
+
+        /// New state of the window.
+        WindowState state;
+    };
+
     /// Host event.
     struct HostEvent
     {
@@ -48,6 +64,10 @@ namespace pm
             /// received, the handle might have been re-used and referring to
             /// a different window.
             WINDOW_DESTROYED,
+
+            /// A window was resize. The `resize` field contains details about
+            /// the event.
+            WINDOW_RESIZED,
         };
 
         /// Type of event that was triggered.
@@ -60,6 +80,10 @@ namespace pm
             /// - WINDOW_CREATED
             /// - WINDOW_DESTROYED
             WindowEvent window;
+
+            /// Window resize details. Provided for events of type
+            /// `WINDOW_RESIZED`.
+            WindowResizeEvent resize;
         };
 
         HostEvent();

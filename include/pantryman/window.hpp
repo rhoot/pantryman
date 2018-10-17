@@ -31,6 +31,14 @@ namespace pm
         const char* title{""};
     };
 
+    /// Window states.
+    enum class WindowState : uint16_t
+    {
+        NORMAL,
+        MINIMIZED,
+        MAXIMIZED,
+    };
+
     /// Asynchronously create a window. Once completed, trigger a
     /// `WINDOW_CREATED` event regardless of whether it was successful. If an
     /// error occurs before the asynchronous operation has been queued,
