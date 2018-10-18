@@ -19,4 +19,14 @@ namespace pm
         return getHost().destroyWindow(handle, o_err);
     }
 
+    void setWindowState(WindowHandle handle, WindowState state)
+    {
+        getHost().setWindowState(handle, state);
+    }
+
+    void setWindowStyle(WindowHandle handle, WindowStyle style)
+    {
+        getHost().setWindowStyle(handle, style);
+    }
+
 } // namespace pm

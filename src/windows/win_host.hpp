@@ -29,6 +29,8 @@ namespace pm
         void createWindowImpl(const CreateWindowArgs& args) override;
         void destroyWindowImpl(WindowHandle handle) override;
         void pumpEventsImpl() override;
+        void setWindowStateImpl(const WindowStateArgs& args) override;
+        void setWindowStyleImpl(const WindowStyleArgs& args) override;
 
         WinWindow m_windows[PM_CONFIG_MAX_WINDOWS];
 

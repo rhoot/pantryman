@@ -53,6 +53,22 @@ namespace pm
         }
     }
 
+	void WinHost::setWindowStateImpl(const WindowStateArgs& args)
+	{
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        WinWindow& window = m_windows[args.handle.value];
+        assert(window.isCreated());
+        window.setState(args.state);
+	}
+
+    void WinHost::setWindowStyleImpl(const WindowStyleArgs& args)
+    {
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        WinWindow& window = m_windows[args.handle.value];
+        assert(window.isCreated());
+        window.setStyle(args.style);
+    }
+
 }
 
 #endif // PM_OS_WINDOWS

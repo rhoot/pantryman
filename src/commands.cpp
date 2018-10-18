@@ -37,7 +37,7 @@ namespace pm
                 cmd->createWindow.width  = m_buffer.read<uint16_t>();
                 cmd->createWindow.height = m_buffer.read<uint16_t>();
                 cmd->createWindow.state  = m_buffer.read<WindowState>();
-                cmd->createWindow.style   = m_buffer.read<WindowMode>();
+                cmd->createWindow.style   = m_buffer.read<WindowStyle>();
 
                 const uint16_t titleLen = m_buffer.read<uint16_t>();
                 m_buffer.read(cmd->createWindow.title, 1, titleLen);
@@ -48,6 +48,16 @@ namespace pm
 
             case HostCommand::DESTROY_WINDOW:
                 cmd->windowHandle = m_buffer.read<WindowHandle>();
+                break;
+
+            case HostCommand::SET_WINDOW_STATE:
+                cmd->windowState.handle = m_buffer.read<WindowHandle>();
+                cmd->windowState.state  = m_buffer.read<WindowState>();
+                break;
+
+            case HostCommand::SET_WINDOW_STYLE:
+                cmd->windowStyle.handle = m_buffer.read<WindowHandle>();
+                cmd->windowStyle.style  = m_buffer.read<WindowStyle>();
                 break;
 
             case HostCommand::STOP:
@@ -88,6 +98,24 @@ namespace pm
         m_buffer.beginWrite();
         m_buffer.write(HostCommand::DESTROY_WINDOW);
         m_buffer.write(handle);
+        m_buffer.endWrite();
+    }
+
+    void HostCommands::sendSetWindowState(WindowHandle handle, WindowState state)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostCommand::SET_WINDOW_STATE);
+        m_buffer.write(handle);
+        m_buffer.write(state);
+        m_buffer.endWrite();
+    }
+
+    void HostCommands::sendSetWindowStyle(WindowHandle handle, WindowStyle style)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostCommand::SET_WINDOW_STYLE);
+        m_buffer.write(handle);
+        m_buffer.write(style);
         m_buffer.endWrite();
     }
 

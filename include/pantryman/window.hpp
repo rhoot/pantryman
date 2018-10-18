@@ -13,7 +13,7 @@ namespace pm
 {
 
     /// Window style.
-    enum class WindowMode : uint16_t
+    enum class WindowStyle : uint16_t
     {
         NORMAL,
         BORDERLESS,
@@ -49,7 +49,7 @@ namespace pm
         WindowState state{WindowState::NORMAL};
 
         /// Window border style.
-        WindowMode style{WindowMode::NORMAL};
+        WindowStyle style{WindowStyle::NORMAL};
     };
 
     /// Asynchronously create a window. Once completed, trigger a
@@ -63,5 +63,8 @@ namespace pm
     /// operation has been queued, populate `o_err` with the error that
     /// occured.
     void destroy(WindowHandle handle, Error* o_err);
+
+    void setWindowState(WindowHandle handle, WindowState state);
+    void setWindowStyle(WindowHandle handle, WindowStyle style);
 
 } // namespace pm

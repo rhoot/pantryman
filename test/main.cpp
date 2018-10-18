@@ -13,7 +13,7 @@ int32_t PM_CALL pmMain(int32_t, char**)
 {
     pm::WindowParams params;
     params.title = "foo";
-    params.style = pm::WindowMode::BORDERLESS;
+    params.style = pm::WindowStyle::BORDERLESS;
     params.state = pm::WindowState::MAXIMIZED;
 
     pm::WindowHandle window = pm::createWindow(params, pm::ErrorAssert{});
@@ -48,6 +48,29 @@ int32_t PM_CALL pmMain(int32_t, char**)
                         event.keyboard.isShiftDown ? "t" : "f",
                         event.keyboard.isOsLogoDown ? "t" : "f"
                     );
+
+                    switch (event.keyboard.key)
+                    {
+                        case pm::Key::M:
+                            pm::setWindowState(window, pm::WindowState::MINIMIZED);
+                            break;
+
+                        case pm::Key::F:
+                            pm::setWindowState(window, pm::WindowState::MAXIMIZED);
+                            break;
+
+                        case pm::Key::R:
+                            pm::setWindowState(window, pm::WindowState::NORMAL);
+                            break;
+
+                        case pm::Key::N:
+                            pm::setWindowStyle(window, pm::WindowStyle::NORMAL);
+                            break;
+
+                        case pm::Key::B:
+                            pm::setWindowStyle(window, pm::WindowStyle::BORDERLESS);
+                            break;
+                    }
                     break;
 
                 case pm::HostEvent::STOPPED:

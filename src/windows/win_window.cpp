@@ -41,7 +41,7 @@ namespace pm
         wchar_t title[MAX_WINDOW_TITLE_LEN + 1] = {0};
         MultiByteToWideChar(CP_UTF8, 0, args.title, -1, title, MAX_WINDOW_TITLE_LEN + 1);
 
-        const DWORD style = (args.style == WindowMode::BORDERLESS) ? WS_POPUP : WS_OVERLAPPEDWINDOW;
+        const DWORD style = (args.style == WindowStyle::BORDERLESS) ? WS_POPUP : WS_OVERLAPPEDWINDOW;
 
         m_hwnd = CreateWindowExW(
             0,
@@ -96,6 +96,54 @@ namespace pm
         }
 
         m_events = nullptr;
+    }
+
+    void WinWindow::setState(WindowState state)
+    {
+        if (!m_hwnd)
+        {
+            return;
+        }
+
+        switch (state)
+        {
+            case WindowState::NORMAL:
+                ShowWindow(m_hwnd, SW_RESTORE);
+                break;
+
+            case WindowState::MINIMIZED:
+                ShowWindow(m_hwnd, SW_MINIMIZE);
+                break;
+
+            case WindowState::MAXIMIZED:
+                ShowWindow(m_hwnd, SW_MAXIMIZE);
+                break;
+        }
+    }
+
+    void WinWindow::setStyle(WindowStyle style)
+    {
+        if (!m_hwnd)
+        {
+            return;
+        }
+
+        const LONG_PTR currStyle = GetWindowLongPtrW(m_hwnd, GWL_STYLE);
+
+        switch (style)
+        {
+            case WindowStyle::NORMAL:
+                SetWindowLongPtrW(m_hwnd, GWL_STYLE, (currStyle & ~WS_POPUP) | WS_OVERLAPPEDWINDOW);
+                break;
+
+            case WindowStyle::BORDERLESS:
+                SetWindowLongPtrW(m_hwnd, GWL_STYLE, (currStyle & ~WS_OVERLAPPEDWINDOW) | WS_POPUP);
+                break;
+        }
+
+        // Force the Window to update according to its style.
+        const UINT posFlags = SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER;
+        SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, posFlags);
     }
 
     void WinWindow::registerClass(Error* o_err)

@@ -31,6 +31,16 @@ namespace pm
         m_commands.sendDestroyWindowCmd(handle);
     }
 
+    void BaseHost::setWindowState(WindowHandle handle, WindowState state)
+    {
+        m_commands.sendSetWindowState(handle, state);
+    }
+
+    void BaseHost::setWindowStyle(WindowHandle handle, WindowStyle style)
+    {
+        m_commands.sendSetWindowStyle(handle, style);
+    }
+
     bool BaseHost::nextEvent(HostEvent* event)
     {
         return m_events.nextEvent(event);
@@ -65,8 +75,10 @@ namespace pm
         {
             switch (cmd.type)
             {
-                case HostCommand::CREATE_WINDOW:  processCreateWindow(cmd.createWindow);  break;
-                case HostCommand::DESTROY_WINDOW: processDestroyWindow(cmd.windowHandle); break;
+                case HostCommand::CREATE_WINDOW:    processCreateWindow(cmd.createWindow);  break;
+                case HostCommand::DESTROY_WINDOW:   processDestroyWindow(cmd.windowHandle); break;
+                case HostCommand::SET_WINDOW_STATE: processSetWindowState(cmd.windowState); break;
+                case HostCommand::SET_WINDOW_STYLE: processSetWindowStyle(cmd.windowStyle); break;
 
                 case HostCommand::STOP:
                     processStop();
@@ -87,6 +99,16 @@ namespace pm
     void BaseHost::processDestroyWindow(WindowHandle handle)
     {
         destroyWindowImpl(handle);
+    }
+
+    void BaseHost::processSetWindowState(const WindowStateArgs& args)
+    {
+        setWindowStateImpl(args);
+    }
+
+    void BaseHost::processSetWindowStyle(const WindowStyleArgs& args)
+    {
+        setWindowStyleImpl(args);
     }
 
     void BaseHost::processStop()
