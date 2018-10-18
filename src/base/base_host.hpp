@@ -48,10 +48,6 @@ namespace pm
         enum class Cmd : uint16_t;
 
         void processCmds();
-        void processCreateWindow(const CreateWindowArgs& args);
-        void processDestroyWindow(WindowHandle handle);
-        void processSetWindowState(const WindowStateArgs& args);
-        void processSetWindowStyle(const WindowStyleArgs& args);
         void processStop();
 
         HostCommands  m_commands;

@@ -55,16 +55,20 @@ int32_t PM_CALL pmMain(int32_t, char**)
                             pm::setWindowState(window, pm::WindowState::MINIMIZED);
                             break;
 
-                        case pm::Key::F:
-                            pm::setWindowState(window, pm::WindowState::MAXIMIZED);
-                            break;
-
-                        case pm::Key::R:
+                        case pm::Key::N:
                             pm::setWindowState(window, pm::WindowState::NORMAL);
                             break;
 
-                        case pm::Key::N:
-                            pm::setWindowStyle(window, pm::WindowStyle::NORMAL);
+                        case pm::Key::U:
+                            pm::setWindowState(window, pm::WindowState::MAXIMIZED);
+                            break;
+
+                        case pm::Key::F:
+                            pm::setWindowStyle(window, pm::WindowStyle::FIXED_SIZE);
+                            break;
+
+                        case pm::Key::R:
+                            pm::setWindowStyle(window, pm::WindowStyle::RESIZABLE);
                             break;
 
                         case pm::Key::B:

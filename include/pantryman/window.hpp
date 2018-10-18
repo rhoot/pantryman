@@ -15,7 +15,8 @@ namespace pm
     /// Window style.
     enum class WindowStyle : uint16_t
     {
-        NORMAL,
+        FIXED_SIZE,
+        RESIZABLE,
         BORDERLESS,
     };
 
@@ -49,7 +50,7 @@ namespace pm
         WindowState state{WindowState::NORMAL};
 
         /// Window border style.
-        WindowStyle style{WindowStyle::NORMAL};
+        WindowStyle style{WindowStyle::RESIZABLE};
     };
 
     /// Asynchronously create a window. Once completed, trigger a

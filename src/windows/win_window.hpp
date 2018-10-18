@@ -32,6 +32,7 @@ namespace pm
 
     private:
 
+        uint32_t convertStyle(uint32_t prev, WindowStyle style);
         void registerClass(Error* o_err);
         void unregisterClass();
         void updateMetaKeys(Key key, bool isDown);
