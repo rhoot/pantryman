@@ -36,6 +36,8 @@ namespace pm
                 cmd->createWindow.handle = m_buffer.read<WindowHandle>();
                 cmd->createWindow.width  = m_buffer.read<uint16_t>();
                 cmd->createWindow.height = m_buffer.read<uint16_t>();
+                cmd->createWindow.state  = m_buffer.read<WindowState>();
+                cmd->createWindow.style   = m_buffer.read<WindowMode>();
 
                 const uint16_t titleLen = m_buffer.read<uint16_t>();
                 m_buffer.read(cmd->createWindow.title, 1, titleLen);
@@ -74,6 +76,8 @@ namespace pm
         m_buffer.write(handle);
         m_buffer.write(params.width);
         m_buffer.write(params.height);
+        m_buffer.write(params.state);
+        m_buffer.write(params.style);
         m_buffer.write(titleLen);
         m_buffer.write(params.title, 1, titleLen);
         m_buffer.endWrite();

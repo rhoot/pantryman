@@ -12,6 +12,21 @@
 namespace pm
 {
 
+    /// Window style.
+    enum class WindowMode : uint16_t
+    {
+        NORMAL,
+        BORDERLESS,
+    };
+
+    /// Window states.
+    enum class WindowState : uint16_t
+    {
+        NORMAL,
+        MINIMIZED,
+        MAXIMIZED,
+    };
+
     /// Window handle.
     struct WindowHandle
     {
@@ -29,14 +44,12 @@ namespace pm
 
         /// Title of the window.
         const char* title{""};
-    };
 
-    /// Window states.
-    enum class WindowState : uint16_t
-    {
-        NORMAL,
-        MINIMIZED,
-        MAXIMIZED,
+        /// Initial window state.
+        WindowState state{WindowState::NORMAL};
+
+        /// Window border style.
+        WindowMode style{WindowMode::NORMAL};
     };
 
     /// Asynchronously create a window. Once completed, trigger a

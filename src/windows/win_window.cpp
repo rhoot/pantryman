@@ -41,11 +41,13 @@ namespace pm
         wchar_t title[MAX_WINDOW_TITLE_LEN + 1] = {0};
         MultiByteToWideChar(CP_UTF8, 0, args.title, -1, title, MAX_WINDOW_TITLE_LEN + 1);
 
+        const DWORD style = (args.style == WindowMode::BORDERLESS) ? WS_POPUP : WS_OVERLAPPEDWINDOW;
+
         m_hwnd = CreateWindowExW(
             0,
             WND_CLASS_NAME,
             title,
-            WS_OVERLAPPEDWINDOW | WS_VISIBLE,
+            style,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
             args.width,
@@ -62,9 +64,21 @@ namespace pm
             unregisterClass();
         }
 
+        DWORD state = SW_SHOW;
+
+        if (args.state == WindowState::MINIMIZED)
+        {
+            state = SW_SHOWMINIMIZED;
+        }
+        else if (args.state == WindowState::MAXIMIZED)
+        {
+            state = SW_SHOWMAXIMIZED;
+        }
+
         m_handle = args.handle;
         m_events = events;
         SetWindowLongPtrW(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
+        ShowWindow(m_hwnd, state);
     }
 
     bool WinWindow::isCreated() const

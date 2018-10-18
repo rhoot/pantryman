@@ -19,6 +19,8 @@ namespace pm
         WindowHandle handle;
         uint16_t     width;
         uint16_t     height;
+        WindowState  state;
+        WindowMode   style;
         char         title[MAX_WINDOW_TITLE_LEN + 1];
     };
 
