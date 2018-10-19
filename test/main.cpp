@@ -30,7 +30,8 @@ int32_t PM_CALL pmMain(int32_t, char**)
             {
                 case pm::HostEvent::KEY_DOWN:
                     std::printf(
-                        "KEY_DOWN { key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        "KEY_DOWN { window=%#hx, key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        event.keyboard.window.value,
                         uint16_t(event.keyboard.key),
                         event.keyboard.isAltDown ? "t" : "f",
                         event.keyboard.isCtrlDown ? "t" : "f",
@@ -41,7 +42,8 @@ int32_t PM_CALL pmMain(int32_t, char**)
 
                 case pm::HostEvent::KEY_UP:
                     std::printf(
-                        "KEY_UP { key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        "KEY_UP { window=%#hx, key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        event.keyboard.window.value,
                         uint16_t(event.keyboard.key),
                         event.keyboard.isAltDown ? "t" : "f",
                         event.keyboard.isCtrlDown ? "t" : "f",

@@ -17,6 +17,9 @@ namespace pm
     /// Keyboard input event.
     struct KeyboardEvent
     {
+        /// Window the key event occurred in.
+        WindowHandle window;
+
         /// Key that was part of the event.
         Key key;
 

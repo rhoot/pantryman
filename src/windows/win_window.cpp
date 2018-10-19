@@ -272,7 +272,7 @@ namespace pm
                         const bool extended = !!(lparam & (1 << 24));
                         const Key  key      = translateKey(uint32_t(wparam), extended);
                         window->updateMetaKeys(key, true);
-                        window->m_events->sendKeyDownEvent(key, MetaKeyFlags::Type(window->m_metaKeys));
+                        window->m_events->sendKeyDownEvent(window->m_handle, key, MetaKeyFlags::Type(window->m_metaKeys));
                     }
 
                     break;
@@ -288,7 +288,7 @@ namespace pm
                         const bool extended = !!(lparam & (1 << 24));
                         const Key  key      = translateKey(uint32_t(wparam), extended);
                         window->updateMetaKeys(key, false);
-                        window->m_events->sendKeyUpEvent(key, MetaKeyFlags::Type(window->m_metaKeys));
+                        window->m_events->sendKeyUpEvent(window->m_handle, key, MetaKeyFlags::Type(window->m_metaKeys));
                     }
 
                     break;

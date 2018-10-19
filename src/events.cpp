@@ -29,8 +29,10 @@ namespace pm
             case HostEvent::KEY_DOWN:
             case HostEvent::KEY_UP:
             {
+                const WindowHandle window     = m_buffer.read<WindowHandle>();
                 const Key key                 = m_buffer.read<Key>();
                 const MetaKeyFlags::Type meta = m_buffer.read<MetaKeyFlags::Type>();
+                event->keyboard.window        = window;
                 event->keyboard.key           = key;
                 event->keyboard.isAltDown     = !!(meta & MetaKeyFlags::ALT);
                 event->keyboard.isCtrlDown    = !!(meta & MetaKeyFlags::CTRL);
@@ -68,19 +70,21 @@ namespace pm
         return true;
     }
 
-    void HostEventSink::sendKeyDownEvent(Key key, MetaKeyFlags::Type meta)
+    void HostEventSink::sendKeyDownEvent(WindowHandle window, Key key, MetaKeyFlags::Type meta)
     {
         m_buffer.beginWrite();
         m_buffer.write(HostEvent::KEY_DOWN);
+        m_buffer.write(window);
         m_buffer.write(key);
         m_buffer.write(meta);
         m_buffer.endWrite();
     }
 
-    void HostEventSink::sendKeyUpEvent(Key key, MetaKeyFlags::Type meta)
+    void HostEventSink::sendKeyUpEvent(WindowHandle window, Key key, MetaKeyFlags::Type meta)
     {
         m_buffer.beginWrite();
         m_buffer.write(HostEvent::KEY_UP);
+        m_buffer.write(window);
         m_buffer.write(key);
         m_buffer.write(meta);
         m_buffer.endWrite();

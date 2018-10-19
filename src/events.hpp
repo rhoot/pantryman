@@ -39,8 +39,8 @@ namespace pm
 
         // Producer
 
-        void sendKeyDownEvent(Key key, MetaKeyFlags::Type meta);
-        void sendKeyUpEvent(Key key, MetaKeyFlags::Type meta);
+        void sendKeyDownEvent(WindowHandle window, Key key, MetaKeyFlags::Type meta);
+        void sendKeyUpEvent(WindowHandle window, Key key, MetaKeyFlags::Type meta);
         void sendStoppedEvent();
         void sendWindowClosedEvent(WindowHandle handle);
         void sendWindowCreatedEvent(WindowHandle handle, const Error& err);
