@@ -24,17 +24,14 @@ namespace pm
 
         BaseHost();
 
+        // app thread
+        HostCommands& commands();
         WindowHandle createWindow(const WindowParams& params, Error* o_err);
         void destroyWindow(WindowHandle handle, Error* o_err);
-        void execute(ExecuteFn function, void* userPointer);
-        void setWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
-        void setWindowState(WindowHandle handle, WindowState state);
-        void setWindowStyle(WindowHandle handle, WindowStyle style);
-
         bool nextEvent(HostEvent* event);
+
+        // host thread
         void run();
-        void setCallback(uint16_t index, ExecuteFn function, void* userPointer);
-        void stop();
 
     protected:
 

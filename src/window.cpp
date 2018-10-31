@@ -21,17 +21,17 @@ namespace pm
 
     void setWindowSize(WindowHandle handle, uint16_t width, uint16_t height)
     {
-        getHost().setWindowSize(handle, width, height);
+        getHost().commands().sendSetWindowSize(handle, width, height);
     }
 
     void setWindowState(WindowHandle handle, WindowState state)
     {
-        getHost().setWindowState(handle, state);
+        getHost().commands().sendSetWindowState(handle, state);
     }
 
     void setWindowStyle(WindowHandle handle, WindowStyle style)
     {
-        getHost().setWindowStyle(handle, style);
+        getHost().commands().sendSetWindowStyle(handle, style);
     }
 
 } // namespace pm

@@ -3,6 +3,7 @@
 // License: https://opensource.org/licenses/ISC
 //
 
+#include <pantryman/host.hpp>
 #include <pantryman/platform.hpp>
 #include <pantryman/main.hpp>
 
@@ -17,7 +18,7 @@ int main(int argc, char** argv)
     const auto appProc = [&exitCode, argc, argv] ()
     {
         exitCode = pmMain(argc, argv);
-        pm::getHost().stop();
+        pm::stop();
     };
 
     std::thread appThread{std::move(appProc)};

@@ -34,7 +34,7 @@ namespace pm
 
     void execute(ExecuteFn function, void* userPointer)
     {
-        s_host.execute(function, userPointer);
+        s_host.commands().sendExecute(function, userPointer);
     }
 
     void executeSync(ExecuteFn function, void* userPointer)
@@ -60,7 +60,7 @@ namespace pm
         data.user = userPointer;
 
         std::unique_lock<std::mutex> lock{data.mutex};
-        s_host.execute(handler, &data);
+        s_host.commands().sendExecute(handler, &data);
         data.cond.wait(lock);
     }
 
@@ -79,12 +79,12 @@ namespace pm
             return;
         }
 
-        s_host.setCallback(index, function, userPointer);
+        s_host.commands().sendSetCallback(index, function, userPointer);
     }
 
     void stop()
     {
-        s_host.stop();
+        s_host.commands().sendStop();
     }
 
 }

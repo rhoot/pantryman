@@ -89,7 +89,7 @@ namespace pm
         return true;
     }
 
-    void HostCommands::sendCreateWindowCmd(WindowHandle handle, const WindowParams& params)
+    void HostCommands::sendCreateWindow(WindowHandle handle, const WindowParams& params)
     {
         uint16_t titleLen = uint16_t(std::strlen(params.title));
 
@@ -110,7 +110,7 @@ namespace pm
         m_buffer.endWrite();
     }
 
-    void HostCommands::sendDestroyWindowCmd(WindowHandle handle)
+    void HostCommands::sendDestroyWindow(WindowHandle handle)
     {
         m_buffer.beginWrite();
         m_buffer.write(HostCommand::DESTROY_WINDOW);
@@ -165,7 +165,7 @@ namespace pm
         m_buffer.endWrite();
     }
 
-    void HostCommands::sendStopCmd()
+    void HostCommands::sendStop()
     {
         m_buffer.beginWrite();
         m_buffer.write(HostCommand::STOP);

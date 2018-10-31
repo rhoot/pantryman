@@ -28,7 +28,7 @@ namespace pm
         uint16_t     width;
         uint16_t     height;
         WindowState  state;
-        WindowStyle   style;
+        WindowStyle  style;
         char         title[MAX_WINDOW_TITLE_LEN + 1];
     };
 
@@ -99,14 +99,14 @@ namespace pm
 
         // Producer
 
-        void sendCreateWindowCmd(WindowHandle handle, const WindowParams& params);
-        void sendDestroyWindowCmd(WindowHandle handle);
+        void sendCreateWindow(WindowHandle handle, const WindowParams& params);
+        void sendDestroyWindow(WindowHandle handle);
         void sendExecute(ExecuteFn function, void* userPointer);
         void sendSetCallback(uint16_t index, ExecuteFn function, void* userPointer);
         void sendSetWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
         void sendSetWindowState(WindowHandle handle, WindowState state);
         void sendSetWindowStyle(WindowHandle handle, WindowStyle style);
-        void sendStopCmd();
+        void sendStop();
 
     private:
 

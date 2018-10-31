@@ -16,11 +16,16 @@ namespace pm
     {
     }
 
+    HostCommands& BaseHost::commands()
+    {
+        return m_commands;
+    }
+
     WindowHandle BaseHost::createWindow(const WindowParams& params, Error* o_err)
     {
         const WindowHandle handle = m_windowHandles.obtain(o_err);
         PM_ERROR_RETURN(o_err, handle);
-        m_commands.sendCreateWindowCmd(handle, params);
+        m_commands.sendCreateWindow(handle, params);
         return handle;
     }
 
@@ -28,27 +33,7 @@ namespace pm
     {
         m_windowHandles.release(handle, o_err);
         PM_ERROR_RETURN(o_err);
-        m_commands.sendDestroyWindowCmd(handle);
-    }
-
-    void BaseHost::execute(ExecuteFn function, void* userPointer)
-    {
-        m_commands.sendExecute(function, userPointer);
-    }
-
-    void BaseHost::setWindowSize(WindowHandle handle, uint16_t width, uint16_t height)
-    {
-        m_commands.sendSetWindowSize(handle, width, height);
-    }
-
-    void BaseHost::setWindowState(WindowHandle handle, WindowState state)
-    {
-        m_commands.sendSetWindowState(handle, state);
-    }
-
-    void BaseHost::setWindowStyle(WindowHandle handle, WindowStyle style)
-    {
-        m_commands.sendSetWindowStyle(handle, style);
+        m_commands.sendDestroyWindow(handle);
     }
 
     bool BaseHost::nextEvent(HostEvent* event)
@@ -78,17 +63,6 @@ namespace pm
                 }
             }
         }
-    }
-
-    void BaseHost::setCallback(uint16_t index, ExecuteFn function, void* userPointer)
-    {
-        assert(index < PM_CONFIG_MAX_HOST_CALLBACKS);
-        m_commands.sendSetCallback(index, function, userPointer);
-    }
-
-    void BaseHost::stop()
-    {
-        m_commands.sendStopCmd();
     }
 
     void BaseHost::processCmds()
