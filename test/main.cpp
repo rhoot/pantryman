@@ -3,11 +3,14 @@
 // License: https://opensource.org/licenses/ISC
 //
 
+#include <pantryman/controller.hpp>
 #include <pantryman/host.hpp>
 #include <pantryman/main.hpp>
 #include <pantryman/window.hpp>
 
+#include <cinttypes>
 #include <cstdio>
+#include <cstring>
 
 int32_t PM_CALL pmMain(int32_t, char**)
 {
@@ -25,6 +28,8 @@ int32_t PM_CALL pmMain(int32_t, char**)
     pm::WindowHandle window = pm::createWindow(params, pm::ErrorAssert{});
 
     bool running = true;
+
+    pm::ControllerState controllers[pm::MAX_CONTROLLERS];
 
     while (running)
     {
@@ -117,7 +122,46 @@ int32_t PM_CALL pmMain(int32_t, char**)
                     break;
             }
         }
+
+        for (uint8_t i = 0; i < pm::MAX_CONTROLLERS; ++i)
+        {
+            pm::Error err;
+            pm::ControllerState state;
+            pm::getState(i, &state, &err);
+
+            if (!isOk(&err))
+            {
+                continue;
+            }
+
+            if (std::memcmp(&state, controllers + i, sizeof(state)) == 0)
+            {
+                continue;
+            }
+
+            std::memcpy(controllers + i, &state, sizeof(state));
+
+            std::printf(
+                "CONTROLLER_%hhu { type=%hhu, L=(%f,%f), R=(%f,%f), LT=%f, RT=%f, buttons=(",
+                i,
+                state.type,
+                pm::stickAxis(state.leftStickX),
+                pm::stickAxis(state.leftStickY),
+                pm::stickAxis(state.rightStickX),
+                pm::stickAxis(state.rightStickY),
+                pm::triggerAxis(state.leftTrigger),
+                pm::triggerAxis(state.rightTrigger)
+            );
+
+            for (int32_t j = 0; j < 16; ++j) {
+                if (isDown(state.buttons, pm::ControllerButton(1 << j))) {
+                    std::printf("%d,", j);
+                }
+            }
+
+            std::printf(") }\n");
+        }
     }
 
-	return 0;
+    return 0;
 }

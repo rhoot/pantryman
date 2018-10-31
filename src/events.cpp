@@ -122,8 +122,8 @@ namespace pm
         m_buffer.endWrite();
     }
 
-	void HostEventSink::sendWindowResizedEvent(WindowHandle handle, uint16_t w, uint16_t h, WindowState state)
-	{
+    void HostEventSink::sendWindowResizedEvent(WindowHandle handle, uint16_t w, uint16_t h, WindowState state)
+    {
         m_buffer.beginWrite();
         m_buffer.write(HostEvent::WINDOW_RESIZED);
         m_buffer.write(handle);
@@ -131,6 +131,6 @@ namespace pm
         m_buffer.write(h);
         m_buffer.write(state);
         m_buffer.endWrite();
-	}
+    }
 
 } // namespace pm

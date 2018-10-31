@@ -29,6 +29,9 @@ namespace pm
     /// Success error value.
     extern Error ERR_OK;
 
+    /// Generic failure error value.
+    extern Error ERR_FAILED;
+
     /// Return whether the given error is OK.
     bool isOk(Error* err);
 

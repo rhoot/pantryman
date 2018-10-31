@@ -11,6 +11,7 @@ namespace pm
 {
 
     Error ERR_OK;
+    Error ERR_FAILED{1, "unknown failure"};
 
     ErrorAssert::~ErrorAssert()
     {
