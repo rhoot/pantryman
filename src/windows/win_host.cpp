@@ -53,6 +53,14 @@ namespace pm
         }
     }
 
+    void WinHost::setWindowSizeImpl(const WindowSizeArgs& args)
+    {
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        WinWindow& window = m_windows[args.handle.value];
+        assert(window.isCreated());
+        window.setSize(args.width, args.height);
+    }
+
 	void WinHost::setWindowStateImpl(const WindowStateArgs& args)
 	{
         assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);

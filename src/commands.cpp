@@ -50,6 +50,12 @@ namespace pm
                 cmd->windowHandle = m_buffer.read<WindowHandle>();
                 break;
 
+            case HostCommand::SET_WINDOW_SIZE:
+                cmd->windowSize.handle = m_buffer.read<WindowHandle>();
+                cmd->windowSize.width  = m_buffer.read<uint16_t>();
+                cmd->windowSize.height = m_buffer.read<uint16_t>();
+                break;
+
             case HostCommand::SET_WINDOW_STATE:
                 cmd->windowState.handle = m_buffer.read<WindowHandle>();
                 cmd->windowState.state  = m_buffer.read<WindowState>();
@@ -98,6 +104,16 @@ namespace pm
         m_buffer.beginWrite();
         m_buffer.write(HostCommand::DESTROY_WINDOW);
         m_buffer.write(handle);
+        m_buffer.endWrite();
+    }
+
+    void HostCommands::sendSetWindowSize(WindowHandle handle, uint16_t width, uint16_t height)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostCommand::SET_WINDOW_SIZE);
+        m_buffer.write(handle);
+        m_buffer.write(width);
+        m_buffer.write(height);
         m_buffer.endWrite();
     }
 

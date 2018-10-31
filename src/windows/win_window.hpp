@@ -27,6 +27,7 @@ namespace pm
         void create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err);
         bool isCreated() const;
         void destroy();
+        void setSize(uint16_t width, uint16_t height);
         void setState(WindowState state);
         void setStyle(WindowStyle style);
 

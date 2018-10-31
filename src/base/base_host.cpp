@@ -31,6 +31,11 @@ namespace pm
         m_commands.sendDestroyWindowCmd(handle);
     }
 
+    void BaseHost::setWindowSize(WindowHandle handle, uint16_t width, uint16_t height)
+    {
+        m_commands.sendSetWindowSize(handle, width, height);
+    }
+
     void BaseHost::setWindowState(WindowHandle handle, WindowState state)
     {
         m_commands.sendSetWindowState(handle, state);
@@ -77,6 +82,7 @@ namespace pm
             {
                 case HostCommand::CREATE_WINDOW:    createWindowImpl(cmd.createWindow);  break;
                 case HostCommand::DESTROY_WINDOW:   destroyWindowImpl(cmd.windowHandle); break;
+                case HostCommand::SET_WINDOW_SIZE:  setWindowSizeImpl(cmd.windowSize);   break;
                 case HostCommand::SET_WINDOW_STATE: setWindowStateImpl(cmd.windowState); break;
                 case HostCommand::SET_WINDOW_STYLE: setWindowStyleImpl(cmd.windowStyle); break;
 

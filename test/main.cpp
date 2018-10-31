@@ -53,6 +53,14 @@ int32_t PM_CALL pmMain(int32_t, char**)
 
                     switch (event.keyboard.key)
                     {
+                        case pm::Key::NUM_1:
+                            pm::setWindowSize(window, 640, 480);
+                            break;
+
+                        case pm::Key::NUM_2:
+                            pm::setWindowSize(window, 1024, 768);
+                            break;
+
                         case pm::Key::M:
                             pm::setWindowState(window, pm::WindowState::MINIMIZED);
                             break;

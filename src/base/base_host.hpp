@@ -26,6 +26,7 @@ namespace pm
 
         WindowHandle createWindow(const WindowParams& params, Error* o_err);
         void destroyWindow(WindowHandle handle, Error* o_err);
+        void setWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
         void setWindowState(WindowHandle handle, WindowState state);
         void setWindowStyle(WindowHandle handle, WindowStyle style);
 
@@ -38,6 +39,7 @@ namespace pm
         virtual void createWindowImpl(const CreateWindowArgs& args) = 0;
         virtual void destroyWindowImpl(WindowHandle handle) = 0;
         virtual void pumpEventsImpl() = 0;
+        virtual void setWindowSizeImpl(const WindowSizeArgs& args) = 0;
         virtual void setWindowStateImpl(const WindowStateArgs& args) = 0;
         virtual void setWindowStyleImpl(const WindowStyleArgs& args) = 0;
 

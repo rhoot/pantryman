@@ -96,6 +96,44 @@ namespace pm
         m_events = nullptr;
     }
 
+    void WinWindow::setSize(uint16_t width, uint16_t height)
+    {
+        if (!m_hwnd)
+        {
+            return;
+        }
+
+        POINT topLeft;
+        topLeft.x = 0;
+        topLeft.y = 0;
+
+        if (!ClientToScreen(m_hwnd, &topLeft))
+        {
+            return;
+        }
+
+        const LONG_PTR style   = GetWindowLongPtrW(m_hwnd, GWL_STYLE);
+        const LONG_PTR exStyle = GetWindowLongPtrW(m_hwnd, GWL_EXSTYLE);
+
+        RECT rect;
+        rect.left   = topLeft.x;
+        rect.top    = topLeft.y;
+        rect.right  = topLeft.x + LONG(width);
+        rect.bottom = topLeft.y + LONG(height);
+
+        if (!AdjustWindowRectEx(&rect, DWORD(style), FALSE, DWORD(exStyle)))
+        {
+            return;
+        }
+
+        const int x = int(rect.left);
+        const int y = int(rect.top);
+        const int w = int(rect.right - rect.left);
+        const int h = int(rect.bottom - rect.top);
+
+        MoveWindow(m_hwnd, x, y, w, h, TRUE);
+    }
+
     void WinWindow::setState(WindowState state)
     {
         if (!m_hwnd)

@@ -24,6 +24,13 @@ namespace pm
         char         title[MAX_WINDOW_TITLE_LEN + 1];
     };
 
+    struct WindowSizeArgs
+    {
+        WindowHandle handle;
+        uint16_t     width;
+        uint16_t     height;
+    };
+
     struct WindowStateArgs
     {
         WindowHandle handle;
@@ -42,6 +49,7 @@ namespace pm
         {
             CREATE_WINDOW,
             DESTROY_WINDOW,
+            SET_WINDOW_SIZE,
             SET_WINDOW_STATE,
             SET_WINDOW_STYLE,
             STOP,
@@ -53,6 +61,7 @@ namespace pm
         {
             CreateWindowArgs createWindow;
             WindowHandle     windowHandle;
+            WindowSizeArgs   windowSize;
             WindowStateArgs  windowState;
             WindowStyleArgs  windowStyle;
         };
@@ -74,6 +83,7 @@ namespace pm
 
         void sendCreateWindowCmd(WindowHandle handle, const WindowParams& params);
         void sendDestroyWindowCmd(WindowHandle handle);
+        void sendSetWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
         void sendSetWindowState(WindowHandle handle, WindowState state);
         void sendSetWindowStyle(WindowHandle handle, WindowStyle style);
         void sendStopCmd();

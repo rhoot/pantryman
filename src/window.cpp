@@ -19,6 +19,11 @@ namespace pm
         return getHost().destroyWindow(handle, o_err);
     }
 
+    void setWindowSize(WindowHandle handle, uint16_t width, uint16_t height)
+    {
+        getHost().setWindowSize(handle, width, height);
+    }
+
     void setWindowState(WindowHandle handle, WindowState state)
     {
         getHost().setWindowState(handle, state);
