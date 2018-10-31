@@ -8,9 +8,13 @@
 #include <pantryman/main.hpp>
 #include <pantryman/window.hpp>
 
+#include <chrono>
 #include <cinttypes>
 #include <cstdio>
 #include <cstring>
+#include <thread>
+
+using namespace std::chrono_literals;
 
 int32_t PM_CALL pmMain(int32_t, char**)
 {
@@ -30,6 +34,11 @@ int32_t PM_CALL pmMain(int32_t, char**)
     bool running = true;
 
     pm::ControllerState controllers[pm::MAX_CONTROLLERS];
+
+    pm::setCallback(0, [](void*) {
+        std::printf("FRAME\n");
+        std::this_thread::sleep_for(100ms);
+    }, nullptr, pm::ErrorAssert{});
 
     while (running)
     {

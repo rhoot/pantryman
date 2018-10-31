@@ -69,7 +69,21 @@ namespace pm
             {
                 break;
             }
+
+            for (const Callback& cb : m_callbacks)
+            {
+                if (cb.function)
+                {
+                    cb.function(cb.userPointer);
+                }
+            }
         }
+    }
+
+    void BaseHost::setCallback(uint16_t index, ExecuteFn function, void* userPointer)
+    {
+        assert(index < PM_CONFIG_MAX_HOST_CALLBACKS);
+        m_commands.sendSetCallback(index, function, userPointer);
     }
 
     void BaseHost::stop()
@@ -91,6 +105,12 @@ namespace pm
                 case HostCommand::SET_WINDOW_SIZE:  setWindowSizeImpl(cmd.windowSize);             break;
                 case HostCommand::SET_WINDOW_STATE: setWindowStateImpl(cmd.windowState);           break;
                 case HostCommand::SET_WINDOW_STYLE: setWindowStyleImpl(cmd.windowStyle);           break;
+
+                case HostCommand::SET_CALLBACK:
+                    assert(cmd.callback.index < PM_CONFIG_MAX_HOST_CALLBACKS);
+                    m_callbacks[cmd.callback.index].function    = cmd.callback.function;
+                    m_callbacks[cmd.callback.index].userPointer = cmd.callback.userPointer;
+                    break;
 
                 case HostCommand::STOP:
                     processStop();

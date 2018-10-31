@@ -33,6 +33,7 @@ namespace pm
 
         bool nextEvent(HostEvent* event);
         void run();
+        void setCallback(uint16_t index, ExecuteFn function, void* userPointer);
         void stop();
 
     protected:
@@ -50,10 +51,17 @@ namespace pm
 
         enum class Cmd : uint16_t;
 
+        struct Callback
+        {
+            ExecuteFn function{nullptr};
+            void*     userPointer{nullptr};
+        };
+
         void processCmds();
         void processStop();
 
         HostCommands  m_commands;
+        Callback      m_callbacks[PM_CONFIG_MAX_HOST_CALLBACKS];
         bool          m_stop;
 
         HandlePool<WindowHandle, PM_CONFIG_MAX_WINDOWS> m_windowHandles;

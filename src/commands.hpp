@@ -15,6 +15,13 @@ namespace pm
 
     constexpr uint16_t MAX_WINDOW_TITLE_LEN = 255;
 
+    struct CallbackArgs
+    {
+        uint16_t  index;
+        ExecuteFn function;
+        void*     userPointer;
+    };
+
     struct CreateWindowArgs
     {
         WindowHandle handle;
@@ -57,6 +64,7 @@ namespace pm
             CREATE_WINDOW,
             DESTROY_WINDOW,
             EXECUTE,
+            SET_CALLBACK,
             SET_WINDOW_SIZE,
             SET_WINDOW_STATE,
             SET_WINDOW_STYLE,
@@ -67,6 +75,7 @@ namespace pm
 
         union
         {
+            CallbackArgs     callback;
             CreateWindowArgs createWindow;
             ExecuteArgs      execute;
             WindowHandle     windowHandle;
@@ -93,6 +102,7 @@ namespace pm
         void sendCreateWindowCmd(WindowHandle handle, const WindowParams& params);
         void sendDestroyWindowCmd(WindowHandle handle);
         void sendExecute(ExecuteFn function, void* userPointer);
+        void sendSetCallback(uint16_t index, ExecuteFn function, void* userPointer);
         void sendSetWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
         void sendSetWindowState(WindowHandle handle, WindowState state);
         void sendSetWindowStyle(WindowHandle handle, WindowStyle style);

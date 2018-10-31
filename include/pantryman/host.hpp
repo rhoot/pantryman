@@ -128,6 +128,9 @@ namespace pm
     /// Function pointer for `execute` and `executeSync`.
     using ExecuteFn = void(*)(void*);
 
+    /// Error returned when an invalid callback index was specified.
+    extern Error ERR_INVALID_INDEX;
+
     /// Execute a function on the host thread. This function returns
     /// immediately, while the function may get executed at a later point.
     void execute(ExecuteFn function, void* userPointer);
@@ -141,6 +144,16 @@ namespace pm
     /// Attempt to get the next host event. If an event was received, return
     /// true. If no event was available, return false.
     bool nextEvent(HostEvent* event);
+
+    /// Set a function to be called every frame on the host thread. Functions
+    /// set this way will be called in the order of their index, and the index
+    /// must be less than the value of `PM_CONFIG_MAX_HOST_CALLBACKS`. Set the
+    /// function to `nullptr` to reset it.
+    ///
+    /// Important: When setting function to `nullptr`, the previous function
+    /// may still be called one more time due to the asynchronousity of this
+    /// call.
+    void setCallback(uint16_t index, ExecuteFn function, void* userPointer, Error* o_err);
 
     /// Stop the host. Once this has been called, no more commands will be
     /// processed.

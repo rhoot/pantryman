@@ -13,6 +13,15 @@
 namespace pm
 {
 
+    namespace
+    {
+
+        constexpr uint32_t ERR_CODE = uint32_t('host');
+
+    } // namespace
+
+    Error ERR_INVALID_INDEX{ERR_CODE + 1, "invalid index"};
+
     static Host s_host;
 
     Host& getHost()
@@ -58,6 +67,19 @@ namespace pm
     bool nextEvent(HostEvent* event)
     {
         return s_host.nextEvent(event);
+    }
+
+    void setCallback(uint16_t index, ExecuteFn function, void* userPointer, Error* o_err)
+    {
+        PM_ERROR_RETURN(o_err);
+
+        if (index >= PM_CONFIG_MAX_HOST_CALLBACKS)
+        {
+            PM_ERROR_UPDATE(o_err, ERR_INVALID_INDEX);
+            return;
+        }
+
+        s_host.setCallback(index, function, userPointer);
     }
 
     void stop()
