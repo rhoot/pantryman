@@ -31,6 +31,11 @@ namespace pm
         m_commands.sendDestroyWindowCmd(handle);
     }
 
+    void BaseHost::execute(ExecuteFn function, void* userPointer)
+    {
+        m_commands.sendExecute(function, userPointer);
+    }
+
     void BaseHost::setWindowSize(WindowHandle handle, uint16_t width, uint16_t height)
     {
         m_commands.sendSetWindowSize(handle, width, height);
@@ -80,11 +85,12 @@ namespace pm
         {
             switch (cmd.type)
             {
-                case HostCommand::CREATE_WINDOW:    createWindowImpl(cmd.createWindow);  break;
-                case HostCommand::DESTROY_WINDOW:   destroyWindowImpl(cmd.windowHandle); break;
-                case HostCommand::SET_WINDOW_SIZE:  setWindowSizeImpl(cmd.windowSize);   break;
-                case HostCommand::SET_WINDOW_STATE: setWindowStateImpl(cmd.windowState); break;
-                case HostCommand::SET_WINDOW_STYLE: setWindowStyleImpl(cmd.windowStyle); break;
+                case HostCommand::CREATE_WINDOW:    createWindowImpl(cmd.createWindow);            break;
+                case HostCommand::DESTROY_WINDOW:   destroyWindowImpl(cmd.windowHandle);           break;
+                case HostCommand::EXECUTE:          cmd.execute.function(cmd.execute.userPointer); break;
+                case HostCommand::SET_WINDOW_SIZE:  setWindowSizeImpl(cmd.windowSize);             break;
+                case HostCommand::SET_WINDOW_STATE: setWindowStateImpl(cmd.windowState);           break;
+                case HostCommand::SET_WINDOW_STYLE: setWindowStyleImpl(cmd.windowStyle);           break;
 
                 case HostCommand::STOP:
                     processStop();

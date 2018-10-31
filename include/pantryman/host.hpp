@@ -125,6 +125,19 @@ namespace pm
         HostEvent();
     };
 
+    /// Function pointer for `execute` and `executeSync`.
+    using ExecuteFn = void(*)(void*);
+
+    /// Execute a function on the host thread. This function returns
+    /// immediately, while the function may get executed at a later point.
+    void execute(ExecuteFn function, void* userPointer);
+
+    /// Execute a function on the host thread, and wait for it to complete.
+    ///
+    /// Important: Be super careful when using this to avoid a deadlock.
+    /// Prefer using `execute` whenever possible.
+    void executeSync(ExecuteFn function, void* userPointer);
+
     /// Attempt to get the next host event. If an event was received, return
     /// true. If no event was available, return false.
     bool nextEvent(HostEvent* event);

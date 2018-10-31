@@ -50,6 +50,11 @@ namespace pm
                 cmd->windowHandle = m_buffer.read<WindowHandle>();
                 break;
 
+            case HostCommand::EXECUTE:
+                cmd->execute.function    = m_buffer.read<ExecuteFn>();
+                cmd->execute.userPointer = m_buffer.read<void*>();
+                break;
+
             case HostCommand::SET_WINDOW_SIZE:
                 cmd->windowSize.handle = m_buffer.read<WindowHandle>();
                 cmd->windowSize.width  = m_buffer.read<uint16_t>();
@@ -104,6 +109,15 @@ namespace pm
         m_buffer.beginWrite();
         m_buffer.write(HostCommand::DESTROY_WINDOW);
         m_buffer.write(handle);
+        m_buffer.endWrite();
+    }
+
+    void HostCommands::sendExecute(ExecuteFn function, void* userPointer)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostCommand::EXECUTE);
+        m_buffer.write(function);
+        m_buffer.write(userPointer);
         m_buffer.endWrite();
     }
 

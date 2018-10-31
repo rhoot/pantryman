@@ -11,6 +11,12 @@
 
 int32_t PM_CALL pmMain(int32_t, char**)
 {
+    std::printf("pmMain: 1\n");
+    pm::executeSync([](void*){ std::printf("pmMain: 2\n"); }, nullptr);
+    std::printf("pmMain: 3\n");
+    pm::execute([](void*){ std::printf("pmMain: 4\n"); }, nullptr);
+    std::printf("pmMain: 5\n");
+
     pm::WindowParams params;
     params.title = "foo";
     params.style = pm::WindowStyle::BORDERLESS;

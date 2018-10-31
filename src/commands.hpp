@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <pantryman/host.hpp>
 #include <pantryman/window.hpp>
 
 #include "cmdbuffer.hpp"
@@ -22,6 +23,12 @@ namespace pm
         WindowState  state;
         WindowStyle   style;
         char         title[MAX_WINDOW_TITLE_LEN + 1];
+    };
+
+    struct ExecuteArgs
+    {
+        ExecuteFn function;
+        void*     userPointer;
     };
 
     struct WindowSizeArgs
@@ -49,6 +56,7 @@ namespace pm
         {
             CREATE_WINDOW,
             DESTROY_WINDOW,
+            EXECUTE,
             SET_WINDOW_SIZE,
             SET_WINDOW_STATE,
             SET_WINDOW_STYLE,
@@ -60,6 +68,7 @@ namespace pm
         union
         {
             CreateWindowArgs createWindow;
+            ExecuteArgs      execute;
             WindowHandle     windowHandle;
             WindowSizeArgs   windowSize;
             WindowStateArgs  windowState;
@@ -83,6 +92,7 @@ namespace pm
 
         void sendCreateWindowCmd(WindowHandle handle, const WindowParams& params);
         void sendDestroyWindowCmd(WindowHandle handle);
+        void sendExecute(ExecuteFn function, void* userPointer);
         void sendSetWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
         void sendSetWindowState(WindowHandle handle, WindowState state);
         void sendSetWindowStyle(WindowHandle handle, WindowStyle style);
