@@ -9,6 +9,7 @@
 #import <AppKit/AppKit.h>
 
 #include "mac_host.hpp"
+#include "mac_util.hpp"
 
 @interface pmMacHostDelegate : NSObject<NSApplicationDelegate>
 @end
@@ -43,17 +44,17 @@ namespace pm
             [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
             // Menu bar.
-            NSMenu* menuBar = [[NSMenu new] autorelease];
+            NSMenu* menuBar = PM_AUTORELEASE([NSMenu new]);
             [NSApp setMainMenu:menuBar];
 
-            NSMenuItem* appBarItem = [[NSMenuItem new] autorelease];
+            NSMenuItem* appBarItem = PM_AUTORELEASE([NSMenuItem new]);
             [menuBar addItem:appBarItem];
 
             // Application menu.
-            NSMenu* appMenu = [[NSMenu new] autorelease];
+            NSMenu* appMenu = PM_AUTORELEASE([NSMenu new]);
             [appBarItem setSubmenu:appMenu];
 
-            NSMenuItem* quitItem = [[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+            NSMenuItem* quitItem = PM_AUTORELEASE([[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(terminate:) keyEquivalent:@"q"]);
             [appMenu addItem:quitItem];
         }
     }
@@ -62,7 +63,7 @@ namespace pm
     {
         @autoreleasepool {
             [NSApp setDelegate:nil];
-            [s_delegate release];
+            PM_RELEASE(s_delegate);
             s_delegate = nil;
         }
     }
@@ -77,7 +78,9 @@ namespace pm
 
     void MacHost::mainLoopImpl()
     {
-        [NSApp finishLaunching];
+        @autoreleasepool {
+            [NSApp finishLaunching];
+        }
 
         for (;;)
         {
