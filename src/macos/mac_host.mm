@@ -1,4 +1,3 @@
-//
 // Copyright (c) 2018 Johan Sköld
 // License: https://opensource.org/licenses/ISC
 //
@@ -11,17 +10,62 @@
 
 #include "mac_host.hpp"
 
+@interface pmMacHostDelegate : NSObject<NSApplicationDelegate>
+@end
+
+@implementation pmMacHostDelegate
+
+-(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    pm::stop();
+    return NSTerminateCancel;
+}
+
+@end
+
 namespace pm
 {
 
+    namespace
+    {
+
+        static pmMacHostDelegate* s_delegate;
+
+    }
+
     MacHost::MacHost()
     {
-        [NSApplication sharedApplication];
-        [NSApp finishLaunching];
+        @autoreleasepool {
+            s_delegate = [pmMacHostDelegate new];
+
+            [NSApplication sharedApplication];
+            [NSApp setDelegate:s_delegate];
+            [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+
+            // Menu bar.
+            NSMenu* menuBar = [[NSMenu new] autorelease];
+            [NSApp setMainMenu:menuBar];
+
+            NSMenuItem* appBarItem = [[NSMenuItem new] autorelease];
+            [menuBar addItem:appBarItem];
+
+            // Application menu.
+            NSMenu* appMenu = [[NSMenu new] autorelease];
+            [appBarItem setSubmenu:appMenu];
+
+            NSMenuItem* quitItem = [[[NSMenuItem alloc] initWithTitle:@"Quit" action:@selector(terminate:) keyEquivalent:@"q"] autorelease];
+            [appMenu addItem:quitItem];
+        }
     }
 
     MacHost::~MacHost()
-    {}
+    {
+        @autoreleasepool {
+            [NSApp setDelegate:nil];
+            [s_delegate release];
+            s_delegate = nil;
+        }
+    }
 
     void MacHost::createWindowImpl(const CreateWindowArgs& args)
     {
@@ -33,6 +77,8 @@ namespace pm
 
     void MacHost::mainLoopImpl()
     {
+        [NSApp finishLaunching];
+
         for (;;)
         {
             @autoreleasepool
