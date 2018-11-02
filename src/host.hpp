@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "macos/mac_host.hpp"
 #include "windows/win_host.hpp"
 
 namespace pm

@@ -50,7 +50,7 @@ int32_t PM_CALL pmMain(int32_t, char**)
             {
                 case pm::HostEvent::KEY_DOWN:
                     std::printf(
-                        "KEY_DOWN { window=%#hx, key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        "KEY_DOWN { window=%#hhx, key=%hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
                         event.keyboard.window.value,
                         uint16_t(event.keyboard.key),
                         event.keyboard.isAltDown ? "t" : "f",
@@ -62,7 +62,7 @@ int32_t PM_CALL pmMain(int32_t, char**)
 
                 case pm::HostEvent::KEY_UP:
                     std::printf(
-                        "KEY_UP { window=%#hx, key=%#hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
+                        "KEY_UP { window=%#hhx, key=%hu, alt=%s, ctrl=%s, shift=%s, os=%s }\n",
                         event.keyboard.window.value,
                         uint16_t(event.keyboard.key),
                         event.keyboard.isAltDown ? "t" : "f",
@@ -104,6 +104,9 @@ int32_t PM_CALL pmMain(int32_t, char**)
                         case pm::Key::B:
                             pm::setWindowStyle(window, pm::WindowStyle::BORDERLESS);
                             break;
+
+                        default:
+                            break;
                     }
                     break;
 
@@ -113,21 +116,21 @@ int32_t PM_CALL pmMain(int32_t, char**)
                     break;
 
                 case pm::HostEvent::WINDOW_CLOSED:
-                    std::printf("WINDOW_CLOSED { handle=%#hx }\n", event.window.handle.value);
+                    std::printf("WINDOW_CLOSED { handle=%#hhx }\n", event.window.handle.value);
                     pm::destroy(window, pm::ErrorAssert{});
                     pm::stop();
                     break;
 
                 case pm::HostEvent::WINDOW_CREATED:
-                    std::printf("WINDOW_CREATED { handle=%#hx, error=%s }\n", event.window.handle.value, event.window.error.description);
+                    std::printf("WINDOW_CREATED { handle=%#hhx, error=%s }\n", event.window.handle.value, event.window.error.description);
                     break;
 
                 case pm::HostEvent::WINDOW_DESTROYED:
-                    std::printf("WINDOW_DESTROYED { handle=%#hx }\n", event.window.handle.value);
+                    std::printf("WINDOW_DESTROYED { handle=%#hhx }\n", event.window.handle.value);
                     break;
 
                 case pm::HostEvent::WINDOW_RESIZED:
-                    std::printf("WINDOW_RESIZED { handle=%#hx, width=%hu, height=%hu, state=%hu }\n", event.resize.handle.value, event.resize.width, event.resize.height, event.resize.state);
+                    std::printf("WINDOW_RESIZED { handle=%#hhx, width=%hu, height=%hu, state=%hu }\n", event.resize.handle.value, event.resize.width, event.resize.height, event.resize.state);
                     break;
             }
         }

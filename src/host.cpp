@@ -3,8 +3,6 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#pragma once
-
 #include <condition_variable>
 #include <mutex>
 

@@ -15,6 +15,11 @@ namespace pm
     {
         int32_t     code{0};
         const char* description{"OK"};
+
+        Error() = default;
+        Error(const Error&) = default;
+        Error(int32_t code, const char* description);
+        Error& operator=(const Error&) = default;
     };
 
     /// Assertion error. Use in place of an `Error` pointer to trigger an

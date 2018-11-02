@@ -13,6 +13,11 @@ namespace pm
     Error ERR_OK;
     Error ERR_FAILED{1, "unknown failure"};
 
+    Error::Error(int32_t code, const char* description)
+        : code{code}
+        , description{description}
+    {}
+
     ErrorAssert::~ErrorAssert()
     {
         assert(isOk(&err));

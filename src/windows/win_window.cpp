@@ -3,6 +3,10 @@
 // License: https://opensource.org/licenses/ISC
 //
 
+#include <pantryman/platform.hpp>
+
+#if PM_OS_WINDOWS
+
 #include <pantryman/keyboard.hpp>
 #include "../commands.hpp"
 #include "win_keyboard.hpp"
@@ -17,7 +21,7 @@ namespace pm
     {
 
         constexpr wchar_t WND_CLASS_NAME[] = L"pm::Window";
-        constexpr uint32_t ERR_GROUP = uint32_t('wndw');
+        constexpr int32_t ERR_GROUP = int32_t('wndw');
 
     } // namespace
 
@@ -338,3 +342,5 @@ namespace pm
     }
 
 } // namespace pm
+
+#endif // PM_OS_WINDOWS

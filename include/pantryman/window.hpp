@@ -31,7 +31,7 @@ namespace pm
     /// Window handle.
     struct WindowHandle
     {
-        uint8_t value{UINT8_MAX};
+        uint8_t value;
     };
 
     /// Window creation parameters.

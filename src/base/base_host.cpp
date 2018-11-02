@@ -44,25 +44,27 @@ namespace pm
     void BaseHost::run()
     {
         m_stop = false;
+        mainLoopImpl();
+    }
 
-        for (;;)
+    bool BaseHost::frame()
+    {
+        processCmds();
+
+        for (const Callback& cb : m_callbacks)
         {
-            pumpEventsImpl();
-            processCmds();
-
             if (m_stop)
             {
                 break;
             }
 
-            for (const Callback& cb : m_callbacks)
+            if (cb.function)
             {
-                if (cb.function)
-                {
-                    cb.function(cb.userPointer);
-                }
+                cb.function(cb.userPointer);
             }
         }
+
+        return !m_stop;
     }
 
     void BaseHost::processCmds()

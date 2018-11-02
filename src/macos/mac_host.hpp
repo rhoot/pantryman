@@ -7,22 +7,20 @@
 
 #include <pantryman/platform.hpp>
 
-#if PM_OS_WINDOWS
+#if PM_OS_MACOS
 
 #include "../base/base_host.hpp"
-#include "../compat/windows.hpp"
 #include "../config.hpp"
-#include "win_window.hpp"
 
 namespace pm
 {
 
-    class WinHost : public BaseHost
+    class MacHost : public BaseHost
     {
     public:
 
-        WinHost();
-        ~WinHost();
+        MacHost();
+        ~MacHost();
 
     private:
 
@@ -33,12 +31,10 @@ namespace pm
         void setWindowStateImpl(const WindowStateArgs& args) override;
         void setWindowStyleImpl(const WindowStyleArgs& args) override;
 
-        WinWindow m_windows[PM_CONFIG_MAX_WINDOWS];
-
     };
 
-    using Host = WinHost;
+    using Host = MacHost;
 
 } // namespace pm
 
-#endif // PM_OS_WINDOWS
+#endif // PM_OS_MACOS

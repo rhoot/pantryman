@@ -18,7 +18,7 @@
 namespace pm
 {
 
-    class BaseHost abstract
+    class BaseHost
     {
     public:
 
@@ -37,10 +37,12 @@ namespace pm
 
         virtual void createWindowImpl(const CreateWindowArgs& args) = 0;
         virtual void destroyWindowImpl(WindowHandle handle) = 0;
-        virtual void pumpEventsImpl() = 0;
+        virtual void mainLoopImpl() = 0;
         virtual void setWindowSizeImpl(const WindowSizeArgs& args) = 0;
         virtual void setWindowStateImpl(const WindowStateArgs& args) = 0;
         virtual void setWindowStyleImpl(const WindowStyleArgs& args) = 0;
+
+        bool frame();
 
         HostEventSink m_events;
 

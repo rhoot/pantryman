@@ -19,7 +19,7 @@ solution "pantryman"
     end
 
     flags {
-        "Cpp11",
+        "Cpp14",
         "ExtraWarnings",
         "FatalWarnings",
         "NoExceptions",
@@ -54,6 +54,7 @@ solution "pantryman"
             "../include/**.hpp",
             "../src/**.hpp",
             "../src/**.cpp",
+            "../src/**.mm",
         }
 
     project "pantryman_test"
@@ -66,3 +67,8 @@ solution "pantryman"
         links {
             "pantryman",
         }
+
+        configuration {"macosx"}
+            linkoptions {
+                "-framework AppKit",
+            }

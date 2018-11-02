@@ -3,8 +3,6 @@
 // License: https://opensource.org/licenses/ISC
 //
 
-#pragma once
-
 #include <pantryman/platform.hpp>
 
 #if PM_OS_WINDOWS

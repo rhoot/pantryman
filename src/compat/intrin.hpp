@@ -5,6 +5,6 @@
 
 #include <pantryman/platform.hpp>
 
-#if defined(PM_COMPILER_MSVC)
+#if PM_OS_WINDOWS
 #   include <intrin.h>
 #endif

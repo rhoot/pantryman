@@ -66,7 +66,7 @@ namespace pm
             _BitScanForward64(&index, m_avail);
             return int8_t(index);
 #else
-            return int8_t(__builtin_ctzll(m_avail))
+            return int8_t(__builtin_ctzll(m_avail));
 #endif
         }
 
