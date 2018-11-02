@@ -36,7 +36,8 @@ namespace pm
 
     MacHost::MacHost()
     {
-        @autoreleasepool {
+        @autoreleasepool
+        {
             s_delegate = [pmMacHostDelegate new];
 
             [NSApplication sharedApplication];
@@ -61,7 +62,8 @@ namespace pm
 
     MacHost::~MacHost()
     {
-        @autoreleasepool {
+        @autoreleasepool
+        {
             [NSApp setDelegate:nil];
             PM_RELEASE(s_delegate);
             s_delegate = nil;
@@ -78,7 +80,8 @@ namespace pm
 
     void MacHost::mainLoopImpl()
     {
-        @autoreleasepool {
+        @autoreleasepool
+        {
             [NSApp finishLaunching];
         }
 
