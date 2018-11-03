@@ -83,14 +83,6 @@
 namespace pm
 {
 
-    namespace
-    {
-
-        
-
-    }
-
-
     MacWindow::MacWindow()
         : m_window{nullptr}
     {}
