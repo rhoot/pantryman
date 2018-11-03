@@ -9,12 +9,80 @@
 
 #import <AppKit/AppKit.h>
 
-#include "../commands.hpp"
-#include "mac_window.hpp"
+#include "mac_keyboard.hpp"
 #include "mac_util.hpp"
+#include "mac_window.hpp"
+
+@interface pmMacWindow : NSWindow
+
+    @property(nonatomic) pm::MacWindow* owner;
+
+@end
+
+@implementation pmMacWindow
+
+    -(id)initWithMacWindow:(pm::MacWindow*)window clientSize:(NSSize)size styleMask:(NSWindowStyleMask)style
+    {
+        const NSRect rect = NSMakeRect(0, 0, size.width, size.height);
+
+        self = [super
+            initWithContentRect:rect
+            styleMask:style
+            backing:NSBackingStoreBuffered
+            defer:NO
+        ];
+
+        if (self)
+        {
+            [self setOwner:window];
+        }
+
+        return self;
+    }
+
+    -(BOOL)canBecomeKeyWindow
+    {
+        return YES;
+    }
+
+    -(BOOL)canBecomeMainWindow
+    {
+        return YES;
+    }
+
+    -(void)sendEvent:(NSEvent*)event
+    {
+        void* eventPtr = PM_BRIDGE(void*, event);
+
+        switch ([event type])
+        {
+            case NSEventTypeKeyDown:
+                [self owner]->processKeyDownEvent(eventPtr);
+                return;
+
+            case NSEventTypeKeyUp:
+                [self owner]->processKeyUpEvent(eventPtr);
+                return;
+
+            default:
+                break;
+        }
+
+        [super sendEvent:event];
+    }
+
+@end
 
 namespace pm
 {
+
+    namespace
+    {
+
+        
+
+    }
+
 
     MacWindow::MacWindow()
         : m_window{nullptr}
@@ -22,15 +90,9 @@ namespace pm
 
     void MacWindow::create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err)
     {
-        const NSRect rect = NSMakeRect(0, 0, float(args.width), float(args.height));
+        const NSSize size = NSMakeSize(float(args.width), float(args.height));
         NSWindowStyleMask style = convertStyle(args.style);
-
-        NSWindow* window = [[NSWindow alloc]
-            initWithContentRect:rect
-            styleMask:style
-            backing:NSBackingStoreBuffered
-            defer:NO
-        ];
+        pmMacWindow* window = [[pmMacWindow alloc] initWithMacWindow:this clientSize:size styleMask:style];
 
         if (!window)
         {
@@ -61,7 +123,7 @@ namespace pm
     {
         if (m_window)
         {
-            NSWindow* window = PM_BRIDGE_TRANSFER(NSWindow*, m_window);
+            pmMacWindow* window = PM_BRIDGE_TRANSFER(pmMacWindow*, m_window);
             [window close];
             PM_RELEASE(window);
             m_window = nullptr;
@@ -70,13 +132,13 @@ namespace pm
 
     void MacWindow::setSize(uint16_t width, uint16_t height)
     {
-        NSWindow* window = PM_BRIDGE(NSWindow*, m_window);
+        pmMacWindow* window = PM_BRIDGE(pmMacWindow*, m_window);
         [window setContentSize:NSMakeSize(float(width), float(height))];
     }
 
     void MacWindow::setState(WindowState state)
     {
-        NSWindow* window = PM_BRIDGE(NSWindow*, m_window);
+        pmMacWindow* window = PM_BRIDGE(pmMacWindow*, m_window);
         const NSWindowStyleMask style = [window styleMask];
 
         switch (state)
@@ -109,7 +171,7 @@ namespace pm
 
     void MacWindow::setStyle(WindowStyle style)
     {
-        NSWindow* window = PM_BRIDGE(NSWindow*, m_window);
+        pmMacWindow* window = PM_BRIDGE(pmMacWindow*, m_window);
 
         NSWindowStyleMask oldStyle = [window styleMask];
         NSWindowStyleMask newStyle = convertStyle(style);
@@ -120,6 +182,24 @@ namespace pm
         }
 
         [window setStyleMask:newStyle];
+    }
+
+    void MacWindow::processKeyDownEvent(void* eventPtr)
+    {
+        NSEvent*                 event = PM_BRIDGE(NSEvent*, eventPtr);
+        const Key                key   = translateKey([event keyCode]);
+        const MetaKeyFlags::Type meta  = translateMeta(uint32_t([event modifierFlags]));
+
+        m_events->sendKeyDownEvent(m_handle, key, meta);
+    }
+
+    void MacWindow::processKeyUpEvent(void* eventPtr)
+    {
+        NSEvent*                 event = PM_BRIDGE(NSEvent*, eventPtr);
+        const Key                key   = translateKey([event keyCode]);
+        const MetaKeyFlags::Type meta  = translateMeta(uint32_t([event modifierFlags]));
+        
+        m_events->sendKeyUpEvent(m_handle, key, meta);
     }
 
     uint32_t MacWindow::convertStyle(WindowStyle style)

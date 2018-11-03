@@ -27,7 +27,7 @@ int32_t PM_CALL pmMain(int32_t, char**)
     pm::WindowParams params;
     params.title = "foo";
     params.style = pm::WindowStyle::BORDERLESS;
-    params.state = pm::WindowState::MAXIMIZED;
+    params.state = pm::WindowState::NORMAL;
 
     pm::WindowHandle window = pm::createWindow(params, pm::ErrorAssert{});
 

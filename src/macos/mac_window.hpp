@@ -9,6 +9,7 @@
 
 #if PM_OS_MACOS
 
+#include "../commands.hpp"
 #include "../events.hpp"
 
 namespace pm
@@ -26,6 +27,9 @@ namespace pm
         void setSize(uint16_t width, uint16_t height);
         void setState(WindowState state);
         void setStyle(WindowStyle style);
+
+        void processKeyDownEvent(void* event);
+        void processKeyUpEvent(void* event);
 
     private:
 

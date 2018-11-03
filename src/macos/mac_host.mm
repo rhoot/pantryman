@@ -18,11 +18,11 @@
 
 @implementation pmMacHostDelegate
 
--(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
-{
-    pm::stop();
-    return NSTerminateCancel;
-}
+    -(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+    {
+        pm::stop();
+        return NSTerminateCancel;
+    }
 
 @end
 
@@ -131,14 +131,26 @@ namespace pm
 
     void MacHost::setWindowSizeImpl(const WindowSizeArgs& args)
     {
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        MacWindow& window = m_windows[args.handle.value];
+        assert(window.isCreated());
+        window.setSize(args.width, args.height);
     }
 
     void MacHost::setWindowStateImpl(const WindowStateArgs& args)
     {
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        MacWindow& window = m_windows[args.handle.value];
+        assert(window.isCreated());
+        window.setState(args.state);
     }
 
     void MacHost::setWindowStyleImpl(const WindowStyleArgs& args)
     {
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        MacWindow& window = m_windows[args.handle.value];
+        assert(window.isCreated());
+        window.setStyle(args.style);
     }
 
 } // namespace pm
