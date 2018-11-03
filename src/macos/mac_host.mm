@@ -20,7 +20,11 @@
 
     -(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
     {
-        pm::stop();
+        for (NSWindow* window in [NSApp windows])
+        {
+            [window close];
+        }
+
         return NSTerminateCancel;
     }
 

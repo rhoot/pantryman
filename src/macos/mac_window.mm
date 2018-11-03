@@ -16,6 +16,7 @@
 @interface pmMacWindow : NSWindow
 
     @property(nonatomic) pm::MacWindow* owner;
+    @property(nonatomic, readonly) BOOL closed;
 
 @end
 
@@ -34,6 +35,7 @@
 
         if (self)
         {
+            _closed = NO;
             [self setOwner:window];
         }
 
@@ -48,6 +50,13 @@
     -(BOOL)canBecomeMainWindow
     {
         return YES;
+    }
+
+    -(void)close
+    {
+        [self owner]->processClosedEvent();
+        [super close];
+        _closed = YES;
     }
 
     -(void)sendEvent:(NSEvent*)event
@@ -69,13 +78,6 @@
         }
 
         [super sendEvent:event];
-    }
-
-    -(BOOL)windowShouldClose:(NSWindow *)sender
-    {
-        [self setIsVisible:NO];
-        [self owner]->processClosedEvent();
-        return NO;
     }
 
 @end
@@ -102,6 +104,7 @@ namespace pm
         NSString* title = PM_AUTORELEASE([[NSString alloc] initWithCString:args.title encoding:NSUTF8StringEncoding]);
 
         [window setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+        [window setReleasedWhenClosed:NO];
         [window setTitle:title];
         [window makeKeyAndOrderFront:nil];
         [NSApp activateIgnoringOtherApps:YES];
@@ -124,16 +127,12 @@ namespace pm
         {
             pmMacWindow* window = PM_BRIDGE_TRANSFER(pmMacWindow*, m_window);
 
-            if ([window isReleasedWhenClosed])
+            if (![window closed])
             {
                 [window close];
-            }
-            else
-            {
-                [window close];
-                PM_RELEASE(window);
             }
 
+            PM_RELEASE(window);
             m_window = nullptr;
         }
     }
