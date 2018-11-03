@@ -1,0 +1,41 @@
+//
+// Copyright (c) 2018 Johan Sköld
+// License: https://opensource.org/licenses/ISC
+//
+
+#pragma once
+
+#include <pantryman/platform.hpp>
+
+#if PM_OS_MACOS
+
+#include "../events.hpp"
+
+namespace pm
+{
+
+    class MacWindow
+    {
+    public:
+
+        MacWindow();
+
+        void create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err);
+        bool isCreated() const;
+        void destroy();
+        void setSize(uint16_t width, uint16_t height);
+        void setState(WindowState state);
+        void setStyle(WindowStyle style);
+
+    private:
+
+        HostEventSink*  m_events;
+        void*           m_window;
+        WindowHandle    m_handle;
+    };
+
+    using Window = MacWindow;
+
+} // namespace pm
+
+#endif // PM_OS_MACOS

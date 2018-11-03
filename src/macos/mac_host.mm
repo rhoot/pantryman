@@ -1,3 +1,4 @@
+//
 // Copyright (c) 2018 Johan Sköld
 // License: https://opensource.org/licenses/ISC
 //
@@ -10,6 +11,7 @@
 
 #include "mac_host.hpp"
 #include "mac_util.hpp"
+#include "mac_window.hpp"
 
 @interface pmMacHostDelegate : NSObject<NSApplicationDelegate>
 @end
@@ -72,10 +74,22 @@ namespace pm
 
     void MacHost::createWindowImpl(const CreateWindowArgs& args)
     {
+        assert(args.handle.value < PM_CONFIG_MAX_WINDOWS);
+        MacWindow& window = m_windows[args.handle.value];
+        assert(!window.isCreated());
+
+        Error err;
+        window.create(&m_events, args, &err);
+        m_events.sendWindowCreatedEvent(args.handle, err);
     }
 
     void MacHost::destroyWindowImpl(WindowHandle handle)
     {
+        assert(handle.value < PM_CONFIG_MAX_WINDOWS);
+        MacWindow& window = m_windows[handle.value];
+        assert(window.isCreated());
+        window.destroy();
+        m_events.sendWindowDestroyedEvent(handle);
     }
 
     void MacHost::mainLoopImpl()

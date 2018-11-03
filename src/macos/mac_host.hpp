@@ -11,6 +11,7 @@
 
 #include "../base/base_host.hpp"
 #include "../config.hpp"
+#include "mac_window.hpp"
 
 namespace pm
 {
@@ -30,6 +31,8 @@ namespace pm
         void setWindowSizeImpl(const WindowSizeArgs& args) override;
         void setWindowStateImpl(const WindowStateArgs& args) override;
         void setWindowStyleImpl(const WindowStyleArgs& args) override;
+
+        MacWindow m_windows[PM_CONFIG_MAX_WINDOWS];
 
     };
 
