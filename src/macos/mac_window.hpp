@@ -29,6 +29,8 @@ namespace pm
 
     private:
 
+        uint32_t convertStyle(WindowStyle style);
+
         HostEventSink*  m_events;
         void*           m_window;
         WindowHandle    m_handle;
