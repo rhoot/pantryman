@@ -28,6 +28,7 @@ namespace pm
         void setState(WindowState state);
         void setStyle(WindowStyle style);
 
+        void processClosedEvent();
         void processKeyDownEvent(void* event);
         void processKeyUpEvent(void* event);
 

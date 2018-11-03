@@ -71,6 +71,13 @@
         [super sendEvent:event];
     }
 
+    -(BOOL)windowShouldClose:(NSWindow *)sender
+    {
+        [self setIsVisible:NO];
+        [self owner]->processClosedEvent();
+        return NO;
+    }
+
 @end
 
 namespace pm
@@ -124,8 +131,17 @@ namespace pm
         if (m_window)
         {
             pmMacWindow* window = PM_BRIDGE_TRANSFER(pmMacWindow*, m_window);
-            [window close];
-            PM_RELEASE(window);
+
+            if ([window isReleasedWhenClosed])
+            {
+                [window close];
+            }
+            else
+            {
+                [window close];
+                PM_RELEASE(window);
+            }
+
             m_window = nullptr;
         }
     }
@@ -182,6 +198,11 @@ namespace pm
         }
 
         [window setStyleMask:newStyle];
+    }
+
+    void MacWindow::processClosedEvent()
+    {
+        m_events->sendWindowClosedEvent(m_handle);
     }
 
     void MacWindow::processKeyDownEvent(void* eventPtr)
