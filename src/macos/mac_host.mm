@@ -9,6 +9,7 @@
 
 #import <AppKit/AppKit.h>
 
+#include "mac_controller.hpp"
 #include "mac_host.hpp"
 #include "mac_util.hpp"
 #include "mac_window.hpp"
@@ -100,6 +101,7 @@ namespace pm
     {
         @autoreleasepool
         {
+            controllerInit();
             [NSApp finishLaunching];
         }
 
@@ -125,11 +127,18 @@ namespace pm
                     [NSApp updateWindows];
                 }
 
+                controllerUpdate();
+
                 if (!frame())
                 {
                     break;
                 }
             }
+        }
+
+        @autoreleasepool
+        {
+            controllerDestroy();
         }
     }
 

@@ -71,4 +71,5 @@ solution "pantryman"
         configuration {"macosx"}
             linkoptions {
                 "-framework AppKit",
+                "-framework IOKit",
             }
