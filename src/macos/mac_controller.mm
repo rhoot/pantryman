@@ -30,6 +30,11 @@ namespace pm
         {
         public:
 
+            Controller()
+            {
+                std::memset(&m_state, 0, sizeof(m_state));
+            }
+
             ~Controller()
             {
                 disconnect();
@@ -51,40 +56,22 @@ namespace pm
                     default:
                         break;
                 }
+
+                if (m_device)
+                {
+                    IOHIDDeviceRegisterInputValueCallback(m_device, &Controller::inputCallback, this);
+                }
             }
 
             void disconnect()
             {
-                if (m_elements)
-                {
-                    PM_RELEASE(m_elements);
-                    m_elements = nil;
-                }
-
                 if (m_device)
                 {
                     CFRelease(m_device);
                     m_device = nullptr;
                 }
 
-                m_type            = ControllerType::UNKNOWN;
-                m_leftStickX      = nullptr;
-                m_leftStickY      = nullptr;
-                m_rightStickX     = nullptr;
-                m_rightStickY     = nullptr;
-                m_leftTrigger     = nullptr;
-                m_rightTrigger    = nullptr;
-                m_dpadHat         = nullptr;
-                m_leftButton      = nullptr;
-                m_topButton       = nullptr;
-                m_rightButton     = nullptr;
-                m_bottomButton    = nullptr;
-                m_leftStickBtn    = nullptr;
-                m_rightStickBtn   = nullptr;
-                m_leftBumper      = nullptr;
-                m_rightBumper     = nullptr;
-                m_leftMeta        = nullptr;
-                m_rightMeta       = nullptr;
+                std::memset(&m_state, 0, sizeof(m_state));
             }
 
             bool isConnected() const
@@ -97,40 +84,13 @@ namespace pm
                 return m_device;
             }
 
-            bool getState(ControllerState* o_state)
+            const ControllerState& getState() const
             {
-                if (!m_device)
-                {
-                    return false;
-                }
-
-                o_state->type        = m_type;
-                o_state->leftStickX  = getAxisState(m_leftStickX);
-                o_state->leftStickY  = flipAxis(getAxisState(m_leftStickY));
-                o_state->rightStickX = getAxisState(m_rightStickX);
-                o_state->rightStickY = flipAxis(getAxisState(m_rightStickY));
-                o_state->leftTrigger = uint8_t(getAxisState(m_leftTrigger));
-                o_state->rightTrigger = uint8_t(getAxisState(m_rightTrigger));
-
-                o_state->buttons = ControllerButton::NONE
-                    | getDpadState()
-                    | (o_state->leftTrigger  ? ControllerButton::LEFT_TRIGGER  : ControllerButton::NONE)
-                    | (o_state->rightTrigger ? ControllerButton::RIGHT_TRIGGER : ControllerButton::NONE)
-                    | getButtonState(m_leftButton,      ControllerButton::LEFT_BUTTON)
-                    | getButtonState(m_topButton,       ControllerButton::TOP_BUTTON)
-                    | getButtonState(m_rightButton,     ControllerButton::RIGHT_BUTTON)
-                    | getButtonState(m_bottomButton,    ControllerButton::BOTTOM_BUTTON)
-                    | getButtonState(m_leftStickBtn,    ControllerButton::LEFT_STICK)
-                    | getButtonState(m_rightStickBtn,   ControllerButton::RIGHT_STICK)
-                    | getButtonState(m_leftBumper,      ControllerButton::LEFT_BUMPER)
-                    | getButtonState(m_rightBumper,     ControllerButton::RIGHT_BUMPER)
-                    | getButtonState(m_leftMeta,        ControllerButton::LEFT_META)
-                    | getButtonState(m_rightMeta,       ControllerButton::RIGHT_META);
-
-                return true;
+                return m_state;
             }
 
         private:
+
 
             void connectXbox(IOHIDDeviceRef device, uint16_t pid)
             {
@@ -149,55 +109,77 @@ namespace pm
                         return;
                 }
 
-                m_type   = ControllerType::XBOX;
-                m_device = (IOHIDDeviceRef)CFRetain(device);
+                m_state.type = ControllerType::XBOX;
+                m_device     = (IOHIDDeviceRef)CFRetain(device);
 
-                m_elements = PM_BRIDGE_TRANSFER(NSArray*, IOHIDDeviceCopyMatchingElements(m_device, nullptr, 0));
+                NSArray* elements = PM_AUTORELEASE(PM_BRIDGE_TRANSFER(NSArray*, IOHIDDeviceCopyMatchingElements(m_device, nullptr, 0)));
 
-                for (id elem in m_elements)
+                for (id elem in elements)
                 {
                     IOHIDElementRef element = PM_BRIDGE(IOHIDElementRef, elem);
 
                     const uint32_t usagePage = IOHIDElementGetUsagePage(element);
                     const uint32_t usage     = IOHIDElementGetUsage(element);
-
-                    // These elements are retained by the m_elements array already.
+                    NSValue*       value     = nil;
 
                     switch (usagePage)
                     {
                         case kHIDPage_GenericDesktop:
                             switch (usage)
                             {
-                                case kHIDUsage_GD_X:         m_leftStickX   = element; break;
-                                case kHIDUsage_GD_Y:         m_leftStickY   = element; break;
-                                case kHIDUsage_GD_Z:         m_rightStickX  = element; break;
-                                case kHIDUsage_GD_Rz:        m_rightStickY  = element; break;
-                                case kHIDUsage_GD_Hatswitch: m_dpadHat      = element; break;
-                                default: break;
+                                case kHIDUsage_GD_X:
+                                    remapAxis(element, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
+                                    value = [NSNumber numberWithInt:ElementType::LEFT_STICK_X];
+                                    break;
+
+                                case kHIDUsage_GD_Y:
+                                    remapAxis(element, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
+                                    value = [NSNumber numberWithInt:ElementType::LEFT_STICK_Y];
+                                    break;
+
+                                case kHIDUsage_GD_Z:
+                                    remapAxis(element, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
+                                    value = [NSNumber numberWithInt:ElementType::RIGHT_STICK_X];
+                                    break;
+
+                                case kHIDUsage_GD_Rz:
+                                    remapAxis(element, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
+                                    value = [NSNumber numberWithInt:ElementType::RIGHT_STICK_Y];
+                                    break;
+
+                                case kHIDUsage_GD_Hatswitch:
+                                    value = [NSNumber numberWithInt:ElementType::DPAD_HAT];
+                                    break;
                             }
                             break;
 
                         case kHIDPage_Simulation:
                             switch (usage)
                             {
-                                case kHIDUsage_Sim_Accelerator: m_rightTrigger = element; break;
-                                case kHIDUsage_Sim_Brake:       m_leftTrigger  = element; break;
-                                default: break;
+                                case kHIDUsage_Sim_Accelerator:
+                                    remapAxis(element, 0, 1023, 0, UINT8_MAX);
+                                    value = [NSNumber numberWithInt:ElementType::RIGHT_TRIGGER];
+                                    break;
+
+                                case kHIDUsage_Sim_Brake:
+                                    remapAxis(element, 0, 1023, 0, UINT8_MAX);
+                                    value = [NSNumber numberWithInt:ElementType::LEFT_TRIGGER];
+                                    break;
                             }
                             break;
 
                         case kHIDPage_Button:
                             switch (usage)
                             {
-                                case 0x1: m_bottomButton  = element; break;
-                                case 0x2: m_rightButton   = element; break;
-                                case 0x4: m_leftButton    = element; break;
-                                case 0x5: m_topButton     = element; break;
-                                case 0x7: m_leftBumper    = element; break;
-                                case 0x8: m_rightBumper   = element; break;
-                                case 0xC: m_rightMeta     = element; break;
-                                case 0xE: m_leftStickBtn  = element; break;
-                                case 0xF: m_rightStickBtn = element; break;
+                                case 0x1: value = [NSNumber numberWithInt:ElementType::BOTTOM_BUTTON];      break;
+                                case 0x2: value = [NSNumber numberWithInt:ElementType::RIGHT_BUTTON];       break;
+                                case 0x4: value = [NSNumber numberWithInt:ElementType::LEFT_BUTTON];        break;
+                                case 0x5: value = [NSNumber numberWithInt:ElementType::TOP_BUTTON];         break;
+                                case 0x7: value = [NSNumber numberWithInt:ElementType::LEFT_BUMPER];        break;
+                                case 0x8: value = [NSNumber numberWithInt:ElementType::RIGHT_BUMPER];       break;
+                                case 0xC: value = [NSNumber numberWithInt:ElementType::RIGHT_META];         break;
+                                case 0xE: value = [NSNumber numberWithInt:ElementType::LEFT_STICK_BUTTON];  break;
+                                case 0xF: value = [NSNumber numberWithInt:ElementType::RIGHT_STICK_BUTTON]; break;
                                 default: break;
                             }
                             break;
@@ -205,21 +187,18 @@ namespace pm
                         case kHIDPage_Consumer:
                             if (usage == kHIDUsage_Csmr_ACBack)
                             {
-                                m_leftMeta = element;
+                                value = [NSNumber numberWithInt:ElementType::LEFT_META];
                             }
                             break;
+                    }
 
-                        default:
-                            break;
+                    if (value)
+                    {
+                        IOHIDElementSetProperty(element, PM_BRIDGE(CFStringRef, @"pmEt"), PM_BRIDGE(CFTypeRef, value));
+                        PM_RELEASE(value);
+                        value = nil;
                     }
                 }
-
-                remapAxis(m_leftStickX, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
-                remapAxis(m_leftStickY, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
-                remapAxis(m_rightStickX, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
-                remapAxis(m_rightStickY, 0, UINT16_MAX, INT16_MIN, INT16_MAX);
-                remapAxis(m_leftTrigger, 0, 1023, 0, UINT8_MAX);
-                remapAxis(m_rightTrigger, 0, 1023, 0, UINT8_MAX);
             }
 
             void remapAxis(IOHIDElementRef element, CFIndex minInput, CFIndex maxInput, CFIndex minOutput, CFIndex maxOutput)
@@ -229,104 +208,138 @@ namespace pm
                     return;
                 }
 
-                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationMinKey), PM_BRIDGE(CFTypeRef, @(minOutput)));
-                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationMaxKey), PM_BRIDGE(CFTypeRef, @(maxOutput)));
-                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationSaturationMinKey), PM_BRIDGE(CFTypeRef, @(minInput)));
-                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationSaturationMaxKey), PM_BRIDGE(CFTypeRef, @(maxInput)));
+                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationMinKey), PM_BRIDGE(CFNumberRef, @(minOutput)));
+                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationMaxKey), PM_BRIDGE(CFNumberRef, @(maxOutput)));
+                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationSaturationMinKey), PM_BRIDGE(CFNumberRef, @(minInput)));
+                IOHIDElementSetProperty(element, CFSTR(kIOHIDElementCalibrationSaturationMaxKey), PM_BRIDGE(CFNumberRef, @(maxInput)));
             }
 
-            int16_t flipAxis(int16_t axis)
+            static int16_t flipAxis(int16_t axis)
             {
                 return int16_t(-int32_t(axis) - 1);
             }
 
-            ControllerButton getButtonState(IOHIDElementRef element, ControllerButton button)
+            static void updateDpadState(ControllerButton* buttons, IOHIDValueRef value)
             {
-                IOHIDValueRef value;
+                constexpr uint32_t DPAD_MASK = 0
+                    | uint32_t(ControllerButton::DPAD_LEFT)
+                    | uint32_t(ControllerButton::DPAD_UP)
+                    | uint32_t(ControllerButton::DPAD_RIGHT)
+                    | uint32_t(ControllerButton::DPAD_DOWN);
 
-                if (!element)
+                *buttons = *buttons & ControllerButton(~DPAD_MASK);
+
+                if (const CFIndex state = IOHIDValueGetIntegerValue(value))
                 {
-                    return ControllerButton::NONE;
+                    updateButtonState(buttons, (state >= 6),               ControllerButton::DPAD_LEFT);
+                    updateButtonState(buttons, (state == 8 || state <= 2), ControllerButton::DPAD_UP);
+                    updateButtonState(buttons, (state >= 2 && state <= 4), ControllerButton::DPAD_RIGHT);
+                    updateButtonState(buttons, (state >= 4 && state <= 6), ControllerButton::DPAD_DOWN);
                 }
-
-                if (IOHIDDeviceGetValueWithOptions(m_device, element, &value, kIOHIDDeviceGetValueWithoutUpdate) != kIOReturnSuccess)
-                {
-                    return ControllerButton::NONE;
-                }
-
-                return IOHIDValueGetIntegerValue(value) ? button : ControllerButton::NONE;
             }
 
-            ControllerButton getDpadState()
+            static void updateButtonState(ControllerButton* buttons, bool value, ControllerButton button)
             {
-                IOHIDValueRef value;
-
-                if (!m_dpadHat)
+                if (value)
                 {
-                    return ControllerButton::NONE;
+                    *buttons = *buttons | button;
                 }
-
-                if (IOHIDDeviceGetValueWithOptions(m_device, m_dpadHat, &value, kIOHIDDeviceGetValueWithoutUpdate) != kIOReturnSuccess)
+                else
                 {
-                    return ControllerButton::NONE;
+                    *buttons = *buttons & ControllerButton(~uint32_t(button));
                 }
-
-                const CFIndex state = IOHIDValueGetIntegerValue(value);
-
-                if (!state)
-                {
-                    return ControllerButton::NONE;
-                }
-
-                return ControllerButton::NONE
-                    | ((state >= 6)               ? ControllerButton::DPAD_LEFT  : ControllerButton::NONE)
-                    | ((state == 8 || state <= 2) ? ControllerButton::DPAD_UP    : ControllerButton::NONE)
-                    | ((state >= 2 && state <= 4) ? ControllerButton::DPAD_RIGHT : ControllerButton::NONE)
-                    | ((state >= 4 && state <= 6) ? ControllerButton::DPAD_DOWN  : ControllerButton::NONE);
             }
 
-            int16_t getAxisState(IOHIDElementRef element)
+            static void updateButtonState(ControllerButton* buttons, IOHIDValueRef value, ControllerButton button)
             {
-                IOHIDValueRef value;
+                updateButtonState(buttons, !!IOHIDValueGetIntegerValue(value), button);
+            }
 
-                if (!element)
-                {
-                    return 0;
-                }
-
-                if (IOHIDDeviceGetValueWithOptions(m_device, element, &value, kIOHIDDeviceGetValueWithoutUpdate) != kIOReturnSuccess)
-                {
-                    return 0;
-                }
-
-                float axisValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypeCalibrated);
+            static int16_t getAxisState(IOHIDValueRef value)
+            {
+                const float axisValue = IOHIDValueGetScaledValue(value, kIOHIDValueScaleTypeCalibrated);
                 return int16_t(axisValue);
             }
 
-            ControllerType  m_type{ControllerType::UNKNOWN};
+            static void inputCallback(void* context, IOReturn result, void* sender, IOHIDValueRef value)
+            {
+                if (result != kIOReturnSuccess)
+                {
+                    return;
+                }
+
+                Controller*     controller = static_cast<Controller*>(context);
+                IOHIDElementRef element    = IOHIDValueGetElement(value);
+                NSNumber*       elemType   = PM_BRIDGE(NSNumber*, IOHIDElementGetProperty(element, PM_BRIDGE(CFStringRef, @"pmEt")));
+
+                switch (ElementType::Type([elemType intValue]))
+                {
+                    // Axes
+                    case ElementType::LEFT_STICK_X:  controller->m_state.leftStickX  = getAxisState(value);           break;
+                    case ElementType::LEFT_STICK_Y:  controller->m_state.leftStickY  = flipAxis(getAxisState(value)); break;
+                    case ElementType::RIGHT_STICK_X: controller->m_state.rightStickX = getAxisState(value);           break;
+                    case ElementType::RIGHT_STICK_Y: controller->m_state.rightStickY = flipAxis(getAxisState(value)); break;
+
+                    case ElementType::LEFT_TRIGGER:
+                        controller->m_state.leftTrigger = getAxisState(value);
+                        updateButtonState(&controller->m_state.buttons, controller->m_state.leftTrigger, ControllerButton::LEFT_TRIGGER);
+                        break;
+
+                    case ElementType::RIGHT_TRIGGER:
+                        controller->m_state.rightTrigger = getAxisState(value);
+                        updateButtonState(&controller->m_state.buttons, controller->m_state.rightTrigger, ControllerButton::RIGHT_TRIGGER);
+                        break;
+
+                    case ElementType::DPAD_HAT:
+                        updateDpadState(&controller->m_state.buttons, value);
+                        break;
+
+                    // Buttons
+                    case ElementType::LEFT_BUTTON:        updateButtonState(&controller->m_state.buttons, value, ControllerButton::LEFT_BUTTON);   break;
+                    case ElementType::TOP_BUTTON:         updateButtonState(&controller->m_state.buttons, value, ControllerButton::TOP_BUTTON);    break;
+                    case ElementType::RIGHT_BUTTON:       updateButtonState(&controller->m_state.buttons, value, ControllerButton::RIGHT_BUTTON);  break;
+                    case ElementType::BOTTOM_BUTTON:      updateButtonState(&controller->m_state.buttons, value, ControllerButton::BOTTOM_BUTTON); break;
+                    case ElementType::LEFT_STICK_BUTTON:  updateButtonState(&controller->m_state.buttons, value, ControllerButton::LEFT_STICK);    break;
+                    case ElementType::RIGHT_STICK_BUTTON: updateButtonState(&controller->m_state.buttons, value, ControllerButton::RIGHT_STICK);   break;
+                    case ElementType::LEFT_BUMPER:        updateButtonState(&controller->m_state.buttons, value, ControllerButton::LEFT_BUMPER);   break;
+                    case ElementType::RIGHT_BUMPER:       updateButtonState(&controller->m_state.buttons, value, ControllerButton::RIGHT_BUMPER);  break;
+                    case ElementType::LEFT_META:          updateButtonState(&controller->m_state.buttons, value, ControllerButton::LEFT_META);     break;
+                    case ElementType::RIGHT_META:         updateButtonState(&controller->m_state.buttons, value, ControllerButton::RIGHT_META);    break;
+
+                    default:
+                        break;
+                }
+            }
+
+            struct ElementType
+            {
+                enum Type : int
+                {
+                    // Axes
+                    LEFT_STICK_X,
+                    LEFT_STICK_Y,
+                    RIGHT_STICK_X,
+                    RIGHT_STICK_Y,
+                    LEFT_TRIGGER,
+                    RIGHT_TRIGGER,
+                    DPAD_HAT,
+
+                    // Buttons
+                    LEFT_BUTTON,
+                    TOP_BUTTON,
+                    RIGHT_BUTTON,
+                    BOTTOM_BUTTON,
+                    LEFT_STICK_BUTTON,
+                    RIGHT_STICK_BUTTON,
+                    LEFT_BUMPER,
+                    RIGHT_BUMPER,
+                    LEFT_META,
+                    RIGHT_META,
+                };
+            };
+
+            ControllerState m_state;
             IOHIDDeviceRef  m_device{nullptr};
-            NSArray*        m_elements{nullptr};
-
-            // Axes
-            IOHIDElementRef m_leftStickX{nullptr};
-            IOHIDElementRef m_leftStickY{nullptr};
-            IOHIDElementRef m_rightStickX{nullptr};
-            IOHIDElementRef m_rightStickY{nullptr};
-            IOHIDElementRef m_leftTrigger{nullptr};
-            IOHIDElementRef m_rightTrigger{nullptr};
-            IOHIDElementRef m_dpadHat{nullptr};
-
-            // Buttons
-            IOHIDElementRef m_leftButton{nullptr};
-            IOHIDElementRef m_topButton{nullptr};
-            IOHIDElementRef m_rightButton{nullptr};
-            IOHIDElementRef m_bottomButton{nullptr};
-            IOHIDElementRef m_leftStickBtn{nullptr};
-            IOHIDElementRef m_rightStickBtn{nullptr};
-            IOHIDElementRef m_leftBumper{nullptr};
-            IOHIDElementRef m_rightBumper{nullptr};
-            IOHIDElementRef m_leftMeta{nullptr};
-            IOHIDElementRef m_rightMeta{nullptr};
 
         };
 
@@ -356,14 +369,14 @@ namespace pm
                     return;
                 }
 
-//                NSArray* matching = @[
-//                    @{@(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop), @(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_GamePad)},
-//                    @{@(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop), @(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_MultiAxisController)},
-//                ];
+                NSArray* matching = @[
+                    @{@(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop), @(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_GamePad)},
+                    @{@(kIOHIDDeviceUsagePageKey): @(kHIDPage_GenericDesktop), @(kIOHIDDeviceUsageKey): @(kHIDUsage_GD_MultiAxisController)},
+                ];
 
                 IOHIDManagerRegisterDeviceMatchingCallback(m_hid, &ControllerMgr::deviceMatched, this);
                 IOHIDManagerRegisterDeviceRemovalCallback(m_hid, &ControllerMgr::deviceRemoved, this);
-                IOHIDManagerSetDeviceMatchingMultiple(m_hid, nullptr); //PM_BRIDGE(CFArrayRef, matching));
+                IOHIDManagerSetDeviceMatchingMultiple(m_hid, PM_BRIDGE(CFArrayRef, matching));
                 IOHIDManagerScheduleWithRunLoop(m_hid, CFRunLoopGetMain(), kCFRunLoopDefaultMode);
             }
 
@@ -381,7 +394,8 @@ namespace pm
 
                 for (Controller& controller : m_controllers)
                 {
-                    *(connected++) = controller.getState(state++);
+                    *(connected++) = controller.isConnected();
+                    *(state++)     = controller.getState();
                 }
             }
 
