@@ -29,10 +29,6 @@ solution "pantryman"
         "Symbols",
     }
 
-    includedirs {
-        "../include",
-    }
-
     configuration {"Release"}
         flags {"OptimizeSpeed"}
 
@@ -47,29 +43,5 @@ solution "pantryman"
             "_CRT_SECURE_NO_WARNINGS",
         }
 
-    project "pantryman"
-        kind "StaticLib"
-
-        files {
-            "../include/**.hpp",
-            "../src/**.hpp",
-            "../src/**.cpp",
-            "../src/**.mm",
-        }
-
-    project "pantryman_test"
-        kind "ConsoleApp"
-
-        files {
-            "../test/**.cpp",
-        }
-
-        links {
-            "pantryman",
-        }
-
-        configuration {"macosx"}
-            linkoptions {
-                "-framework AppKit",
-                "-framework IOKit",
-            }
+    dofile "pantryman.lua"
+    dofile "pantryman_test.lua"
