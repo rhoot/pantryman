@@ -7,7 +7,7 @@
 
 #if PM_OS_MACOS
 
-#import <GameController/GameController.h>
+#import <Foundation/Foundation.h>
 #import <IOKit/hid/IOHIDLIB.h>
 
 #include <pantryman/controller.hpp>
@@ -16,8 +16,6 @@
 #include "mac_controller.hpp"
 #include "mac_util.hpp"
 
-#include <atomic>
-#include <iterator>
 #include <mutex>
 
 namespace pm
