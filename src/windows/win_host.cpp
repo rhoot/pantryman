@@ -29,8 +29,8 @@ namespace pm
         assert(!window.isCreated());
         
         Error err;
-        window.create(&m_events, args, &err);
-        m_events.sendWindowCreatedEvent(args.handle, err);
+        void* platformHandle = window.create(&m_events, args, &err);
+        m_events.sendWindowCreatedEvent(args.handle, platformHandle, err);
     }
 
     void WinHost::destroyWindowImpl(WindowHandle handle)

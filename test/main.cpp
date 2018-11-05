@@ -122,7 +122,7 @@ int32_t PM_CALL pmMain(int32_t, char**)
                     break;
 
                 case pm::HostEvent::WINDOW_CREATED:
-                    std::printf("WINDOW_CREATED { handle=%#hhx, error=%s }\n", event.window.handle.value, event.window.error.description);
+                    std::printf("WINDOW_CREATED { handle=%#hhx, platformHandle=%p, error=%s }\n", event.create.handle.value, event.create.platformHandle, event.create.error.description);
                     break;
 
                 case pm::HostEvent::WINDOW_DESTROYED:
@@ -132,6 +132,9 @@ int32_t PM_CALL pmMain(int32_t, char**)
                 case pm::HostEvent::WINDOW_RESIZED:
                     std::printf("WINDOW_RESIZED { handle=%#hhx, width=%hu, height=%hu, state=%hu }\n", event.resize.handle.value, event.resize.width, event.resize.height, event.resize.state);
                     break;
+
+                case pm::HostEvent::WINDOW_RESTYLED:
+                    std::printf("WINDOW_RESTYLED { handle=%#hhx, style=%hu }\n", event.style.handle.value, event.style.style);
             }
         }
 

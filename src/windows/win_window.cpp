@@ -37,10 +37,10 @@ namespace pm
         , m_metaKeys{MetaKeyFlags::NONE}
     { }
 
-    void WinWindow::create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err)
+    void* WinWindow::create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err)
     {
         registerClass(o_err);
-        PM_ERROR_RETURN(o_err);
+        PM_ERROR_RETURN(o_err, nullptr);
 
         wchar_t title[MAX_WINDOW_TITLE_LEN + 1] = {0};
         MultiByteToWideChar(CP_UTF8, 0, args.title, -1, title, MAX_WINDOW_TITLE_LEN + 1);
@@ -64,6 +64,7 @@ namespace pm
         {
             PM_ERROR_UPDATE(o_err, ERR_WINDOW_CREATION_FAILED);
             unregisterClass();
+            return nullptr;
         }
 
         DWORD state = SW_SHOW;
@@ -81,6 +82,7 @@ namespace pm
         m_events = events;
         SetWindowLongPtrW(m_hwnd, GWLP_USERDATA, (LONG_PTR)this);
         ShowWindow(m_hwnd, state);
+        return m_hwnd;
     }
 
     bool WinWindow::isCreated() const

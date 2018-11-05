@@ -65,8 +65,30 @@ namespace pm
     /// occured.
     void destroy(WindowHandle handle, Error* o_err);
 
+    /// Asynchronously resize a window.
     void setWindowSize(WindowHandle handle, uint16_t width, uint16_t height);
+
+    /// Asynchronously change the state of a window.
     void setWindowState(WindowHandle handle, WindowState state);
+
+    /// Asynchronously change the style of a window.
     void setWindowStyle(WindowHandle handle, WindowStyle style);
+
+    /// Get the cached platform handle of a window. If the window has not yet
+    /// finished being created, this value is `nullptr`. Likewise, if there is
+    /// a pending destroy operation, this handle may no longer be valid.
+    void* getWindowPlatformHandle(WindowHandle handle, Error* o_err);
+
+    /// Get the cached size of a window. If a resize operation or event is
+    /// pending, this value may be out of date.
+    void getWindowSize(WindowHandle handle, uint16_t* o_width, uint16_t* o_height, Error* o_err);
+
+    /// Get the cached state of a window. If a state change operation or event
+    /// is pending, this value may be out of date.
+    WindowState getWindowState(WindowHandle handle, Error* o_err);
+
+    /// Get the cached style of a window. If a style change operation or event
+    /// is pending, this value may be out of date.
+    WindowStyle getWindowStyle(WindowHandle handle, Error* o_err);
 
 } // namespace pm

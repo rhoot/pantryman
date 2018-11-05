@@ -7,6 +7,7 @@
 #include <mutex>
 
 #include "host.hpp"
+#include "window.hpp"
 
 namespace pm
 {
@@ -64,7 +65,13 @@ namespace pm
 
     bool nextEvent(HostEvent* event)
     {
-        return s_host.nextEvent(event);
+        if (s_host.nextEvent(event))
+        {
+            updateWindowDataCache(*event);
+            return true;
+        }
+
+        return false;
     }
 
     void setCallback(uint16_t index, ExecuteFn function, void* userPointer, Error* o_err)

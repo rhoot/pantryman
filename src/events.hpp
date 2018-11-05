@@ -43,9 +43,10 @@ namespace pm
         void sendKeyUpEvent(WindowHandle window, Key key, MetaKeyFlags::Type meta);
         void sendStoppedEvent();
         void sendWindowClosedEvent(WindowHandle handle);
-        void sendWindowCreatedEvent(WindowHandle handle, const Error& err);
+        void sendWindowCreatedEvent(WindowHandle handle, void* platformHandle, const Error& err);
         void sendWindowDestroyedEvent(WindowHandle handle);
         void sendWindowResizedEvent(WindowHandle handle, uint16_t w, uint16_t h, WindowState state);
+        void sendWindowRestyledEvent(WindowHandle handle, WindowStyle style);
 
     private:
 

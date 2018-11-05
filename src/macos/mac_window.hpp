@@ -21,7 +21,7 @@ namespace pm
 
         MacWindow();
 
-        void create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err);
+        void* create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err);
         bool isCreated() const;
         void destroy();
         void setSize(uint16_t width, uint16_t height);

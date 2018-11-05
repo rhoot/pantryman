@@ -36,13 +36,23 @@ namespace pm
         bool isOsLogoDown;
     };
 
-    /// Window event.
+    /// Generic window event.
     struct WindowEvent
     {
         /// Handle of the window that triggered the event.
         WindowHandle handle;
+    };
 
-        /// Error value for events triggered by a failure.
+    struct WindowCreateEvent
+    {
+        /// Handle of the window that triggered the event.
+        WindowHandle handle;
+
+        /// Platform handle of the window.
+        void* platformHandle;
+
+        /// An error object, set to any error that might have occurred during
+        /// the creation.
         Error error;
     };
 
@@ -62,6 +72,16 @@ namespace pm
         WindowState state;
     };
 
+    /// Window restyle event.
+    struct WindowStyleEvent
+    {
+        /// Handle of the window that triggered the event.
+        WindowHandle handle;
+
+        /// New style of the window.
+        WindowStyle  style;
+    };
+
     /// Host event.
     struct HostEvent
     {
@@ -78,7 +98,7 @@ namespace pm
             WINDOW_CLOSED,
 
             /// Window creation completed. This is also triggered in case of
-            /// failures. The `window` field contains details about the window,
+            /// failures. The `create` field contains details about the window,
             /// and the error in case of a failure.
             WINDOW_CREATED,
 
@@ -91,6 +111,10 @@ namespace pm
             /// A window was resized. The `resize` field contains details about
             /// the event.
             WINDOW_RESIZED,
+
+            /// A window's style was changed. The `style` field contains details
+            /// about the event.
+            WINDOW_RESTYLED,
 
             /// A key was pressed. Does not repeat. The `keyboard` field
             /// contains details about the key.
@@ -108,13 +132,20 @@ namespace pm
         {
             /// Window details. Provided for events of type:
             /// - WINDOW_CLOSED
-            /// - WINDOW_CREATED
             /// - WINDOW_DESTROYED
             WindowEvent window;
+
+            /// Window create details. Provided for events of type
+            /// `WINDOW_CREATED`.
+            WindowCreateEvent create;
 
             /// Window resize details. Provided for events of type
             /// `WINDOW_RESIZED`.
             WindowResizeEvent resize;
+
+            /// Window style details. Provided for events of type
+            /// `WINDOW_RESTYLED`.
+            WindowStyleEvent style;
 
             /// Keyboard input detauls. Provided for events of type:
             /// - KEY_DOWN

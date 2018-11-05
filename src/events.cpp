@@ -50,8 +50,9 @@ namespace pm
                 break;
 
             case HostEvent::WINDOW_CREATED:
-                event->window.handle = m_buffer.read<WindowHandle>();
-                event->window.error  = m_buffer.read<Error>();
+                event->create.handle         = m_buffer.read<WindowHandle>();
+                event->create.platformHandle = m_buffer.read<void*>();
+                event->create.error          = m_buffer.read<Error>();
                 break;
 
             case HostEvent::WINDOW_RESIZED:
@@ -59,6 +60,11 @@ namespace pm
                 event->resize.width  = m_buffer.read<uint16_t>();
                 event->resize.height = m_buffer.read<uint16_t>();
                 event->resize.state  = m_buffer.read<WindowState>();
+                break;
+
+            case HostEvent::WINDOW_RESTYLED:
+                event->style.handle = m_buffer.read<WindowHandle>();
+                event->style.style  = m_buffer.read<WindowStyle>();
                 break;
 
             default:
@@ -105,11 +111,12 @@ namespace pm
         m_buffer.endWrite();
     }
 
-    void HostEventSink::sendWindowCreatedEvent(WindowHandle handle, const Error& err)
+    void HostEventSink::sendWindowCreatedEvent(WindowHandle handle, void* platformHandle, const Error& err)
     {
         m_buffer.beginWrite();
         m_buffer.write(HostEvent::WINDOW_CREATED);
         m_buffer.write(handle);
+        m_buffer.write(platformHandle);
         m_buffer.write(err);
         m_buffer.endWrite();
     }
@@ -130,6 +137,15 @@ namespace pm
         m_buffer.write(w);
         m_buffer.write(h);
         m_buffer.write(state);
+        m_buffer.endWrite();
+    }
+
+    void HostEventSink::sendWindowRestyledEvent(WindowHandle handle, WindowStyle style)
+    {
+        m_buffer.beginWrite();
+        m_buffer.write(HostEvent::WINDOW_RESTYLED);
+        m_buffer.write(handle);
+        m_buffer.write(style);
         m_buffer.endWrite();
     }
 

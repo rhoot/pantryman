@@ -89,7 +89,7 @@ namespace pm
         : m_window{nullptr}
     {}
 
-    void MacWindow::create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err)
+    void* MacWindow::create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err)
     {
         const NSSize size = NSMakeSize(float(args.width), float(args.height));
         NSWindowStyleMask style = convertStyle(args.style);
@@ -98,7 +98,7 @@ namespace pm
         if (!window)
         {
             PM_ERROR_UPDATE(o_err, ERR_FAILED);
-            return;
+            return nullptr;
         }
 
         NSString* title = PM_AUTORELEASE([[NSString alloc] initWithCString:args.title encoding:NSUTF8StringEncoding]);
@@ -114,6 +114,7 @@ namespace pm
         m_window = PM_BRIDGE_RETAINED(void*, window);
 
         setState(args.state);
+        return PM_BRIDGE(void*, (NSWindow*)window);
     }
 
     bool MacWindow::isCreated() const
@@ -189,6 +190,7 @@ namespace pm
         }
 
         [window setStyleMask:newStyle];
+        m_events->sendWindowRestyledEvent(m_handle, style);
     }
 
     void MacWindow::processClosedEvent()
@@ -210,7 +212,7 @@ namespace pm
         NSEvent*                 event = PM_BRIDGE(NSEvent*, eventPtr);
         const Key                key   = translateKey([event keyCode]);
         const MetaKeyFlags::Type meta  = translateMeta(uint32_t([event modifierFlags]));
-        
+
         m_events->sendKeyUpEvent(m_handle, key, meta);
     }
 

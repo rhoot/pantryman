@@ -24,7 +24,7 @@ namespace pm
 
         WinWindow();
 
-        void create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err);
+        void* create(HostEventSink* events, const CreateWindowArgs& args, Error* o_err);
         bool isCreated() const;
         void destroy();
         void setSize(uint16_t width, uint16_t height);
