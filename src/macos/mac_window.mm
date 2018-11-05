@@ -13,7 +13,7 @@
 #include "mac_util.hpp"
 #include "mac_window.hpp"
 
-@interface pmMacWindow : NSWindow
+@interface pmMacWindow : NSWindow<NSWindowDelegate>
 
     @property(nonatomic) pm::MacWindow* owner;
     @property(nonatomic, readonly) BOOL closed;
@@ -36,6 +36,7 @@
         if (self)
         {
             _closed = NO;
+            [self setDelegate:self];
             [self setOwner:window];
         }
 
@@ -78,6 +79,31 @@
         }
 
         [super sendEvent:event];
+    }
+
+    -(void)windowDidResize:(NSNotification*)notification
+    {
+        [self owner]->sendResizeEvent();
+    }
+
+    -(void)windowDidMiniaturize:(NSNotification *)notification
+    {
+        [self owner]->sendResizeEvent();
+    }
+
+    -(void)windowDidDeminiaturize:(NSNotification *)notification
+    {
+        [self owner]->sendResizeEvent();
+    }
+
+    -(void)windowDidEnterFullScreen:(NSNotification *)notification
+    {
+        [self owner]->sendResizeEvent();
+    }
+
+    -(void)windowDidExitFullScreen:(NSNotification *)notification
+    {
+        [self owner]->sendResizeEvent();
     }
 
 @end
@@ -214,6 +240,30 @@ namespace pm
         const MetaKeyFlags::Type meta  = translateMeta(uint32_t([event modifierFlags]));
 
         m_events->sendKeyUpEvent(m_handle, key, meta);
+    }
+
+    void MacWindow::sendResizeEvent()
+    {
+        pmMacWindow* window = PM_BRIDGE(pmMacWindow*, m_window);
+
+        // size
+        const NSRect   frame  = [window contentView] ? [[window contentView] frame] : [window frame];
+        const uint16_t width  = uint16_t(frame.size.width);
+        const uint16_t height = uint16_t(frame.size.height);
+
+        // state
+        WindowState state = WindowState::NORMAL;
+
+        if ([window isMiniaturized])
+        {
+            state = WindowState::MINIMIZED;
+        }
+        else if ([window styleMask] & NSWindowStyleMaskFullScreen)
+        {
+            state = WindowState::MAXIMIZED;
+        }
+
+        m_events->sendWindowResizedEvent(m_handle, width, height, state);
     }
 
     uint32_t MacWindow::convertStyle(WindowStyle style)

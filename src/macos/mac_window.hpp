@@ -31,6 +31,7 @@ namespace pm
         void processClosedEvent();
         void processKeyDownEvent(void* event);
         void processKeyUpEvent(void* event);
+        void sendResizeEvent();
 
     private:
 
