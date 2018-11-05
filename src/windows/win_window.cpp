@@ -177,6 +177,8 @@ namespace pm
         // Force the Window to update according to its style.
         const UINT posFlags = SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOOWNERZORDER;
         SetWindowPos(m_hwnd, nullptr, 0, 0, 0, 0, posFlags);
+
+        m_events->sendWindowRestyledEvent(m_handle, style);
     }
 
     uint32_t WinWindow::convertStyle(uint32_t prev, WindowStyle style)
